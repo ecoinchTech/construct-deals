@@ -21,6 +21,11 @@ import VendorKYC from "./pages/vendors/VendorKYC";
 import VendorMarketplace from "./pages/vendors/VendorMarketplace";
 import VendorDetails from "./pages/vendors/VendorDetails";
 import VendorVerification from "./pages/admin/VendorVerification";
+import RFQList from "./pages/rfqs/RFQList";
+import RFQForm from "./pages/rfqs/RFQForm";
+import RFQDetails from "./pages/rfqs/RFQDetails";
+import BidSubmission from "./pages/bids/BidSubmission";
+import BidComparison from "./pages/bids/BidComparison";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -142,6 +147,48 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <VendorDetails />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* RFQ Routes */}
+            <Route
+              path="/rfqs"
+              element={
+                <ProtectedRoute>
+                  <RFQList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/new"
+              element={
+                <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                  <RFQForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/:id"
+              element={
+                <ProtectedRoute>
+                  <RFQDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/:id/submit-bid"
+              element={
+                <ProtectedRoute allowedRoles={['vendor']}>
+                  <BidSubmission />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/:id/bids"
+              element={
+                <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                  <BidComparison />
                 </ProtectedRoute>
               }
             />
