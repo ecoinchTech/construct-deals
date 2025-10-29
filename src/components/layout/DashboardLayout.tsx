@@ -59,7 +59,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: 'Organizations', path: '/organizations', icon: Building2 },
     { name: 'Buildings', path: '/buildings', icon: Building },
     { name: 'RFQs', path: '/rfqs', icon: FileText },
-    { name: 'Vendors', path: '/vendors', icon: Users },
+    { name: 'Marketplace', path: '/marketplace/vendors', icon: Users },
   ];
 
   const isActive = (path: string) => location.pathname.startsWith(path);

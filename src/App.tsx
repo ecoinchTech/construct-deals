@@ -16,6 +16,16 @@ import OrganizationDetails from "./pages/organizations/OrganizationDetails";
 import BuildingList from "./pages/buildings/BuildingList";
 import BuildingForm from "./pages/buildings/BuildingForm";
 import BuildingDetails from "./pages/buildings/BuildingDetails";
+import VendorProfile from "./pages/vendors/VendorProfile";
+import VendorKYC from "./pages/vendors/VendorKYC";
+import VendorMarketplace from "./pages/vendors/VendorMarketplace";
+import VendorDetails from "./pages/vendors/VendorDetails";
+import VendorVerification from "./pages/admin/VendorVerification";
+import RFQList from "./pages/rfqs/RFQList";
+import RFQForm from "./pages/rfqs/RFQForm";
+import RFQDetails from "./pages/rfqs/RFQDetails";
+import BidSubmission from "./pages/bids/BidSubmission";
+import BidComparison from "./pages/bids/BidComparison";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -106,6 +116,93 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            
+            {/* Vendor Routes */}
+            <Route
+              path="/vendor/profile"
+              element={
+                <ProtectedRoute allowedRoles={['vendor']}>
+                  <VendorProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor/kyc"
+              element={
+                <ProtectedRoute allowedRoles={['vendor']}>
+                  <VendorKYC />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/marketplace/vendors"
+              element={
+                <ProtectedRoute>
+                  <VendorMarketplace />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/marketplace/vendors/:id"
+              element={
+                <ProtectedRoute>
+                  <VendorDetails />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* RFQ Routes */}
+            <Route
+              path="/rfqs"
+              element={
+                <ProtectedRoute>
+                  <RFQList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/new"
+              element={
+                <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                  <RFQForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/:id"
+              element={
+                <ProtectedRoute>
+                  <RFQDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/:id/submit-bid"
+              element={
+                <ProtectedRoute allowedRoles={['vendor']}>
+                  <BidSubmission />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rfqs/:id/bids"
+              element={
+                <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                  <BidComparison />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Admin Routes */}
+            <Route
+              path="/admin/vendors/pending"
+              element={
+                <ProtectedRoute allowedRoles={['super_admin']}>
+                  <VendorVerification />
+                </ProtectedRoute>
+              }
+            />
+            
             <Route path="/unauthorized" element={<Unauthorized />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
