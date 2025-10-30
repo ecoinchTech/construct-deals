@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Building2, Plus, Search, MapPin, Calendar } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 const OrganizationList = () => {
   const [page, setPage] = useState(1);
@@ -18,8 +17,7 @@ const OrganizationList = () => {
   ) || [];
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -134,7 +132,6 @@ const OrganizationList = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 };
 

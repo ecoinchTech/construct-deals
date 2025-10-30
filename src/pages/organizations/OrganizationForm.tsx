@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Building2, ArrowLeft } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import { CreateOrganizationRequest } from '@/types/organization.types';
 
 const OrganizationForm = () => {
@@ -57,8 +56,7 @@ const OrganizationForm = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl space-y-6">
         {/* Header */}
         <div>
           <Button
@@ -173,7 +171,6 @@ const OrganizationForm = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   );
 };
 

@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Building, ArrowLeft, X } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 import { CreateBuildingRequest } from '@/types/building.types';
 
 const BuildingForm = () => {
@@ -77,8 +76,7 @@ const BuildingForm = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl space-y-6">
         {/* Header */}
         <div>
           <Button
@@ -276,7 +274,6 @@ const BuildingForm = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   );
 };
 
