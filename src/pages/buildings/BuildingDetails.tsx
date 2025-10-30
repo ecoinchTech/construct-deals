@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building, ArrowLeft, Edit, MapPin, Square, Map } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 const BuildingDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,24 +12,20 @@ const BuildingDetails = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
-        <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-        </div>
-      </DashboardLayout>
+      <div className="flex justify-center py-12">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
     );
   }
 
   if (!data?.data.building) {
     return (
-      <DashboardLayout>
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold mb-2">Building not found</h2>
-          <Button onClick={() => navigate('/buildings')}>
-            Back to Buildings
-          </Button>
-        </div>
-      </DashboardLayout>
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold mb-2">Building not found</h2>
+        <Button onClick={() => navigate('/buildings')}>
+          Back to Buildings
+        </Button>
+      </div>
     );
   }
 
@@ -47,8 +42,7 @@ const BuildingDetails = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div>
           <Button
@@ -171,7 +165,6 @@ const BuildingDetails = () => {
           </Card>
         </div>
       </div>
-    </DashboardLayout>
   );
 };
 

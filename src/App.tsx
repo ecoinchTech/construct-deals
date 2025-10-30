@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import Index from "./pages/Index";
@@ -10,6 +10,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
+import DashboardLayout from "./components/layout/DashboardLayout";
 import OrganizationList from "./pages/organizations/OrganizationList";
 import OrganizationForm from "./pages/organizations/OrganizationForm";
 import OrganizationDetails from "./pages/organizations/OrganizationDetails";
@@ -44,167 +45,69 @@ const App = () => (
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/organizations"
-              element={
-                <ProtectedRoute>
-                  <OrganizationList />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/organizations/new"
-              element={
-                <ProtectedRoute>
-                  <OrganizationForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/organizations/:id"
-              element={
-                <ProtectedRoute>
-                  <OrganizationDetails />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/organizations/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <OrganizationForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/buildings"
-              element={
-                <ProtectedRoute>
-                  <BuildingList />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/buildings/new"
-              element={
-                <ProtectedRoute>
-                  <BuildingForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/buildings/:id"
-              element={
-                <ProtectedRoute>
-                  <BuildingDetails />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/buildings/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <BuildingForm />
-                </ProtectedRoute>
-              }
-            />
             
-            {/* Vendor Routes */}
-            <Route
-              path="/vendor/profile"
-              element={
-                <ProtectedRoute allowedRoles={['vendor']}>
-                  <VendorProfile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/vendor/kyc"
-              element={
-                <ProtectedRoute allowedRoles={['vendor']}>
-                  <VendorKYC />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/marketplace/vendors"
-              element={
-                <ProtectedRoute>
-                  <VendorMarketplace />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/marketplace/vendors/:id"
-              element={
-                <ProtectedRoute>
-                  <VendorDetails />
-                </ProtectedRoute>
-              }
-            />
+            {/* Protected routes with DashboardLayout */}
+            <Route element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* Organizations */}
+              <Route path="/organizations" element={<OrganizationList />} />
+              <Route path="/organizations/new" element={<OrganizationForm />} />
+              <Route path="/organizations/:id" element={<OrganizationDetails />} />
+              <Route path="/organizations/:id/edit" element={<OrganizationForm />} />
+              
+              {/* Buildings */}
+              <Route path="/buildings" element={<BuildingList />} />
+              <Route path="/buildings/new" element={<BuildingForm />} />
+              <Route path="/buildings/:id" element={<BuildingDetails />} />
+              <Route path="/buildings/:id/edit" element={<BuildingForm />} />
+              
+              {/* Vendors */}
+              <Route path="/marketplace/vendors" element={<VendorMarketplace />} />
+              <Route path="/marketplace/vendors/:id" element={<VendorDetails />} />
+              <Route path="/vendors" element={<VendorMarketplace />} />
+              
+              {/* RFQs */}
+              <Route path="/rfqs" element={<RFQList />} />
+              <Route path="/rfqs/new" element={<RFQForm />} />
+              <Route path="/rfqs/:id" element={<RFQDetails />} />
+              <Route path="/rfqs/:id/submit-bid" element={<BidSubmission />} />
+              <Route path="/rfqs/:id/bids" element={<BidComparison />} />
+              
+              {/* Contracts - Placeholder */}
+              <Route path="/contracts" element={<div className="p-6"><h1 className="text-2xl font-bold">Contracts</h1><p className="text-muted-foreground mt-2">Contract management coming soon...</p></div>} />
+              
+              {/* Invoices - Placeholder */}
+              <Route path="/invoices" element={<div className="p-6"><h1 className="text-2xl font-bold">Invoices</h1><p className="text-muted-foreground mt-2">Invoice management coming soon...</p></div>} />
+              
+              {/* Ratings - Placeholder */}
+              <Route path="/ratings" element={<div className="p-6"><h1 className="text-2xl font-bold">Ratings</h1><p className="text-muted-foreground mt-2">Rating system coming soon...</p></div>} />
+              
+              {/* Disputes - Placeholder */}
+              <Route path="/disputes" element={<div className="p-6"><h1 className="text-2xl font-bold">Disputes</h1><p className="text-muted-foreground mt-2">Dispute management coming soon...</p></div>} />
+              
+              {/* Admin */}
+              <Route path="/admin/vendors/pending" element={<VendorVerification />} />
+              
+              {/* Settings - Placeholder */}
+              <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground mt-2">Settings coming soon...</p></div>} />
+            </Route>
             
-            {/* RFQ Routes */}
-            <Route
-              path="/rfqs"
-              element={
-                <ProtectedRoute>
-                  <RFQList />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/rfqs/new"
-              element={
-                <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
-                  <RFQForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/rfqs/:id"
-              element={
-                <ProtectedRoute>
-                  <RFQDetails />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/rfqs/:id/submit-bid"
-              element={
-                <ProtectedRoute allowedRoles={['vendor']}>
-                  <BidSubmission />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/rfqs/:id/bids"
-              element={
-                <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
-                  <BidComparison />
-                </ProtectedRoute>
-              }
-            />
-            
-            {/* Admin Routes */}
-            <Route
-              path="/admin/vendors/pending"
-              element={
-                <ProtectedRoute allowedRoles={['super_admin']}>
-                  <VendorVerification />
-                </ProtectedRoute>
-              }
-            />
+            {/* Vendor Profile Routes - with role check */}
+            <Route element={
+              <ProtectedRoute allowedRoles={['vendor']}>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="/vendor/profile" element={<VendorProfile />} />
+              <Route path="/vendor/kyc" element={<VendorKYC />} />
+            </Route>
             
             <Route path="/unauthorized" element={<Unauthorized />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

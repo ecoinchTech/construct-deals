@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Building, Plus, Search, MapPin, Square } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 const BuildingList = () => {
   const [page, setPage] = useState(1);
@@ -29,8 +28,7 @@ const BuildingList = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -152,7 +150,6 @@ const BuildingList = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 };
 

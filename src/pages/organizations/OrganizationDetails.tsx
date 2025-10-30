@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building2, ArrowLeft, Edit, MapPin, FileText, Users, Building } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
 
 const OrganizationDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,32 +12,27 @@ const OrganizationDetails = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
-        <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-        </div>
-      </DashboardLayout>
+      <div className="flex justify-center py-12">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
     );
   }
 
   if (!data?.data.organization) {
     return (
-      <DashboardLayout>
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold mb-2">Organization not found</h2>
-          <Button onClick={() => navigate('/organizations')}>
-            Back to Organizations
-          </Button>
-        </div>
-      </DashboardLayout>
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold mb-2">Organization not found</h2>
+        <Button onClick={() => navigate('/organizations')}>
+          Back to Organizations
+        </Button>
+      </div>
     );
   }
 
   const org = data.data.organization;
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div>
           <Button
@@ -171,7 +165,6 @@ const OrganizationDetails = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
   );
 };
 
