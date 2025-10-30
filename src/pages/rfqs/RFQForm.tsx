@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useCreateRFQMutation } from '@/store/api/rfqApi';
 import { useGetBuildingsQuery } from '@/store/api/buildingApi';
 import { useGetCategoriesQuery } from '@/store/api/categoryApi';
-import { CreateRFQRequest, BOQItem } from '@/types/rfq.types';
+import { CreateRFQRequest, BOQItem, EligibilityCriteria } from '@/types/rfq.types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, Plus, Trash2, FileText, Building, Calendar, DollarSign } from 'lucide-react';
+import React from 'react';
 
 const RFQForm = () => {
   const navigate = useNavigate();
@@ -25,31 +26,48 @@ const RFQForm = () => {
     defaultValues: {
       visibility: 'public',
       evaluationWeights: {
-        price: 40,
-        timeline: 20,
-        experience: 20,
-        quality: 20,
+        priceWeight: 50,
+        timelineWeight: 20,
+        ratingWeight: 20,
+        certificationWeight: 10,
+        maxPrice: 0,
+        maxTimeline: 90
       },
-      boqItems: [{ description: '', unit: '', quantity: 0 }],
+      boqItems: [{ description: '', unit: '', quantity: 0, baselineRate: 0 }],
+      eligibilityCriteria: []
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields: boqFields, append: appendBOQ, remove: removeBOQ } = useFieldArray({
     control,
     name: 'boqItems',
+  });
+
+  const { fields: criteriaFields, append: appendCriteria, remove: removeCriteria } = useFieldArray({
+    control,
+    name: 'eligibilityCriteria',
   });
 
   const buildings = buildingsData?.data?.buildings || [];
   const categories = categoriesData?.data?.categories || [];
 
+  const watchBudgetMax = watch('estBudgetMax');
+
+  // Update maxPrice when budget changes
+  React.useEffect(() => {
+    if (watchBudgetMax) {
+      setValue('evaluationWeights.maxPrice', watchBudgetMax);
+    }
+  }, [watchBudgetMax, setValue]);
+
   const onSubmit = async (data: CreateRFQRequest) => {
     try {
-      const result = await createRFQ(data).unwrap();
-      toast.success('RFQ created successfully');
-      navigate(`/rfqs/${result.data.rfq.id}`);
-    } catch (error: any) {
-      toast.error(error?.data?.message || 'Failed to create RFQ');
-    }
+       const result = await createRFQ(data).unwrap();
+    toast.success('RFQ created successfully');
+    navigate(`/rfqs/${result.data.rfq._id}`);
+  } catch (error: any) {
+    toast.error(error?.data?.message || 'Failed to create RFQ');
+  }
   };
 
   const renderStep1 = () => (
@@ -97,14 +115,14 @@ const RFQForm = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {buildings.map((building) => (
-                    <SelectItem key={building.id} value={building.id}>
+                    <SelectItem key={building._id} value={building._id}>
                       {building.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {errors.buildingId && (
-                <p className="text-sm text-destructive mt-1">{errors.buildingId.message}</p>
+                <p className="text-sm text-destructive mt-1">Building is required</p>
               )}
             </div>
 
@@ -116,14 +134,14 @@ const RFQForm = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
+                    <SelectItem key={category._id} value={category._id}>
                       {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {errors.categoryId && (
-                <p className="text-sm text-destructive mt-1">{errors.categoryId.message}</p>
+                <p className="text-sm text-destructive mt-1">Category is required</p>
               )}
             </div>
           </div>
@@ -162,16 +180,27 @@ const RFQForm = () => {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="closeDate">Close Date *</Label>
-            <Input
-              id="closeDate"
-              type="date"
-              {...register('closeDate', { required: 'Close date is required' })}
-            />
-            {errors.closeDate && (
-              <p className="text-sm text-destructive mt-1">{errors.closeDate.message}</p>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="closeDate">Close Date *</Label>
+              <Input
+                id="closeDate"
+                type="datetime-local"
+                {...register('closeDate', { required: 'Close date is required' })}
+              />
+              {errors.closeDate && (
+                <p className="text-sm text-destructive mt-1">{errors.closeDate.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="preBidQueryDeadline">Pre-Bid Query Deadline</Label>
+              <Input
+                id="preBidQueryDeadline"
+                type="datetime-local"
+                {...register('preBidQueryDeadline')}
+              />
+            </div>
           </div>
 
           <div>
@@ -205,32 +234,32 @@ const RFQForm = () => {
           <CardDescription>Define the items and quantities for this project</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {fields.map((field, index) => (
+          {boqFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Item {index + 1}</h4>
-                {fields.length > 1 && (
+                {boqFields.length > 1 && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => remove(index)}
+                    onClick={() => removeBOQ(index)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="md:col-span-2">
-                  <Label>Description</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label>Description *</Label>
                   <Input
                     {...register(`boqItems.${index}.description`, { required: 'Description is required' })}
                     placeholder="Item description"
                   />
                 </div>
                 <div>
-                  <Label>Unit</Label>
+                  <Label>Unit *</Label>
                   <Input
                     {...register(`boqItems.${index}.unit`, { required: 'Unit is required' })}
                     placeholder="e.g., sqft, nos"
@@ -240,7 +269,7 @@ const RFQForm = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Label>Quantity</Label>
+                  <Label>Quantity *</Label>
                   <Input
                     type="number"
                     {...register(`boqItems.${index}.quantity`, { 
@@ -251,13 +280,21 @@ const RFQForm = () => {
                   />
                 </div>
                 <div>
-                  <Label>Estimated Rate (Optional)</Label>
+                  <Label>Baseline Rate</Label>
                   <Input
                     type="number"
-                    {...register(`boqItems.${index}.estimatedRate`, { valueAsNumber: true })}
+                    {...register(`boqItems.${index}.baselineRate`, { valueAsNumber: true })}
                     placeholder="0"
                   />
                 </div>
+              </div>
+
+              <div>
+                <Label>Specifications</Label>
+                <Input
+                  {...register(`boqItems.${index}.spec`)}
+                  placeholder="Technical specifications..."
+                />
               </div>
             </div>
           ))}
@@ -265,12 +302,102 @@ const RFQForm = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => append({ description: '', unit: '', quantity: 0 })}
+            onClick={() => appendBOQ({ description: '', unit: '', quantity: 0, baselineRate: 0 })}
             className="w-full"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add BOQ Item
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Evaluation Criteria</CardTitle>
+          <CardDescription>Set weights for different evaluation parameters</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <Label htmlFor="priceWeight">Price Weight (%)</Label>
+              <Input
+                id="priceWeight"
+                type="number"
+                {...register('evaluationWeights.priceWeight', { 
+                  required: 'Price weight is required',
+                  valueAsNumber: true,
+                  min: 0,
+                  max: 100
+                })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="timelineWeight">Timeline Weight (%)</Label>
+              <Input
+                id="timelineWeight"
+                type="number"
+                {...register('evaluationWeights.timelineWeight', { 
+                  required: 'Timeline weight is required',
+                  valueAsNumber: true,
+                  min: 0,
+                  max: 100
+                })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="ratingWeight">Rating Weight (%)</Label>
+              <Input
+                id="ratingWeight"
+                type="number"
+                {...register('evaluationWeights.ratingWeight', { 
+                  required: 'Rating weight is required',
+                  valueAsNumber: true,
+                  min: 0,
+                  max: 100
+                })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="certificationWeight">Certification Weight (%)</Label>
+              <Input
+                id="certificationWeight"
+                type="number"
+                {...register('evaluationWeights.certificationWeight', { 
+                  required: 'Certification weight is required',
+                  valueAsNumber: true,
+                  min: 0,
+                  max: 100
+                })}
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="maxTimeline">Maximum Timeline (Days)</Label>
+              <Input
+                id="maxTimeline"
+                type="number"
+                {...register('evaluationWeights.maxTimeline', { 
+                  required: 'Max timeline is required',
+                  valueAsNumber: true,
+                })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="maxPrice">Maximum Price</Label>
+              <Input
+                id="maxPrice"
+                type="number"
+                {...register('evaluationWeights.maxPrice', { 
+                  required: 'Max price is required',
+                  valueAsNumber: true,
+                })}
+                value={watchBudgetMax || ''}
+                readOnly
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 

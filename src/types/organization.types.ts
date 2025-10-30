@@ -1,11 +1,16 @@
 export interface Organization {
-  id: string;
+  _id: string; // Changed from id to _id
+  id?: string; // Keep optional id for compatibility
   name: string;
   gstNumber: string;
   address: string;
   defaultCurrency: string;
-  ownerId: string;
-  preferredVendorIds: string[];
+  ownerUserId: {
+    _id: string;
+    email: string;
+    name: string;
+  };
+  preferredVendors: string[]; // Changed from preferredVendorIds
   createdAt: string;
   updatedAt: string;
 }

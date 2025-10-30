@@ -1,4 +1,5 @@
 export interface Building {
+  _id: string;
   id: string;
   organizationId: string;
   name: string;

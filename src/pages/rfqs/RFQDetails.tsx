@@ -138,10 +138,10 @@ const RFQDetails = () => {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              ${rfq.estBudgetMin.toLocaleString()}
+              ${rfq.estBudgetMin?.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground">
-              to ${rfq.estBudgetMax.toLocaleString()}
+              to ${rfq.estBudgetMax?.toLocaleString()}
             </p>
           </CardContent>
         </Card>
@@ -180,7 +180,7 @@ const RFQDetails = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{rfq.boqItems.length}</p>
+            <p className="text-2xl font-bold">{rfq.boqId?.items?.length || 0}</p>
           </CardContent>
         </Card>
       </div>
@@ -207,8 +207,8 @@ const RFQDetails = () => {
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="boq">BOQ</TabsTrigger>
           <TabsTrigger value="bids">Bids ({bids.length})</TabsTrigger>
-          <TabsTrigger value="addenda">Addenda ({rfq.addenda.length})</TabsTrigger>
-          <TabsTrigger value="attachments">Attachments ({rfq.attachments.length})</TabsTrigger>
+          <TabsTrigger value="addenda">Addenda ({rfq.addenda?.length || 0})</TabsTrigger>
+          <TabsTrigger value="attachments">Attachments ({rfq.attachments?.length || 0})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="details" className="space-y-4">
@@ -223,63 +223,199 @@ const RFQDetails = () => {
 
           <Card>
             <CardHeader>
+              <CardTitle>Project Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Building</p>
+                  <p className="font-medium">{rfq.buildingId?.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Category</p>
+                  <p className="font-medium">{rfq.categoryId?.name}</p>
+                </div>
+              </div>
+              {rfq.preBidQueryDeadline && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Pre-Bid Query Deadline</p>
+                  <p className="font-medium">
+                    {new Date(rfq.preBidQueryDeadline).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Evaluation Criteria</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Price</p>
-                  <p className="text-2xl font-bold">{rfq.evaluationWeights.price}%</p>
+                  <p className="text-2xl font-bold">{rfq.evaluationWeights?.priceWeight}%</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Timeline</p>
-                  <p className="text-2xl font-bold">{rfq.evaluationWeights.timeline}%</p>
+                  <p className="text-2xl font-bold">{rfq.evaluationWeights?.timelineWeight}%</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Experience</p>
-                  <p className="text-2xl font-bold">{rfq.evaluationWeights.experience}%</p>
+                  <p className="text-sm text-muted-foreground">Rating</p>
+                  <p className="text-2xl font-bold">{rfq.evaluationWeights?.ratingWeight}%</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Quality</p>
-                  <p className="text-2xl font-bold">{rfq.evaluationWeights.quality}%</p>
+                  <p className="text-sm text-muted-foreground">Certification</p>
+                  <p className="text-2xl font-bold">{rfq.evaluationWeights?.certificationWeight}%</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Maximum Price</p>
+                  <p className="text-lg font-bold">${rfq.evaluationWeights?.maxPrice?.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Maximum Timeline</p>
+                  <p className="text-lg font-bold">{rfq.evaluationWeights?.maxTimeline} days</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Additional Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Visibility</p>
+                  <p className="font-medium capitalize">{rfq.visibility}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Created By</p>
+                  <p className="font-medium">{rfq.createdBy?.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Created Date</p>
+                  <p className="font-medium">{new Date(rfq.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Last Updated</p>
+                  <p className="font-medium">{new Date(rfq.updatedAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {rfq.preBidQueryDeadline && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Pre-Bid Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Pre-Bid Query Deadline</p>
+                    <p className="font-medium">
+                      {new Date(rfq.preBidQueryDeadline).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {rfq.eligibilityCriteria && rfq.eligibilityCriteria.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Eligibility Criteria</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {rfq.eligibilityCriteria.map((criteria, index) => (
+                    <div key={index} className="p-3 border rounded-lg">
+                      <h4 className="font-medium">{criteria.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{criteria.description}</p>
+                      <Badge variant={criteria.type === 'mandatory' ? 'destructive' : 'outline'} className="mt-2">
+                        {criteria.type}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+
         </TabsContent>
 
         <TabsContent value="boq">
           <Card>
             <CardHeader>
               <CardTitle>Bill of Quantities</CardTitle>
+              <CardDescription>
+                BOQ Version {rfq.boqId?.version} • Created {new Date(rfq.boqId?.createdAt).toLocaleDateString()}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-2">#</th>
-                      <th className="text-left p-2">Description</th>
-                      <th className="text-left p-2">Unit</th>
-                      <th className="text-right p-2">Quantity</th>
-                      <th className="text-right p-2">Est. Rate</th>
+                    <tr className="border-b bg-muted/50">
+                      <th className="text-left p-3 font-medium">#</th>
+                      <th className="text-left p-3 font-medium">Description</th>
+                      <th className="text-left p-3 font-medium">Unit</th>
+                      <th className="text-right p-3 font-medium">Quantity</th>
+                      <th className="text-right p-3 font-medium">Baseline Rate</th>
+                      <th className="text-right p-3 font-medium">Total Amount</th>
+                      <th className="text-left p-3 font-medium">Specifications</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {rfq.boqItems.map((item, index) => (
-                      <tr key={item.id} className="border-b">
-                        <td className="p-2">{index + 1}</td>
-                        <td className="p-2">{item.description}</td>
-                        <td className="p-2">{item.unit}</td>
-                        <td className="p-2 text-right">{item.quantity}</td>
-                        <td className="p-2 text-right">
-                          {item.estimatedRate ? `$${item.estimatedRate}` : '-'}
-                        </td>
-                      </tr>
-                    ))}
+                    {rfq.boqId?.items?.map((item, index) => {
+                      const totalAmount = item.quantity * (item.baselineRate || 0);
+                      return (
+                        <tr key={item._id || index} className="border-b hover:bg-muted/50">
+                          <td className="p-3 font-medium">{index + 1}</td>
+                          <td className="p-3">{item.description}</td>
+                          <td className="p-3">{item.unit}</td>
+                          <td className="p-3 text-right">{item.quantity.toLocaleString()}</td>
+                          <td className="p-3 text-right">
+                            {item.baselineRate ? `$${item.baselineRate.toLocaleString()}` : '-'}
+                          </td>
+                          <td className="p-3 text-right font-medium">
+                            {item.baselineRate ? `$${totalAmount.toLocaleString()}` : '-'}
+                          </td>
+                          <td className="p-3 text-sm text-muted-foreground">{item.spec || '-'}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
+                  {rfq.boqId?.items?.some(item => item.baselineRate) && (
+                    <tfoot>
+                      <tr className="border-t bg-muted/50 font-medium">
+                        <td colSpan={5} className="p-3 text-right">Grand Total:</td>
+                        <td className="p-3 text-right">
+                          ${rfq.boqId?.items?.reduce((total, item) =>
+                            total + (item.quantity * (item.baselineRate || 0)), 0
+                          ).toLocaleString()}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
+
+              {(!rfq.boqId?.items || rfq.boqId.items.length === 0) && (
+                <div className="text-center py-8">
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No BOQ items found</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -304,7 +440,7 @@ const RFQDetails = () => {
               ) : (
                 <div className="space-y-3">
                   {bids.map((bid) => (
-                    <Link key={bid.id} to={`/bids/${bid.id}`}>
+                    <Link key={bid._id} to={`/bids/${bid._id}`}>
                       <div className="p-4 border rounded-lg hover:bg-muted transition-colors">
                         <div className="flex items-center justify-between">
                           <div>
@@ -314,7 +450,7 @@ const RFQDetails = () => {
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold">${bid.totalAmount.toLocaleString()}</p>
+                            <p className="text-2xl font-bold">${bid.totalAmount?.toLocaleString()}</p>
                             <p className="text-sm text-muted-foreground">{bid.timelineDays} days</p>
                           </div>
                         </div>
@@ -372,12 +508,12 @@ const RFQDetails = () => {
               </div>
             </CardHeader>
             <CardContent>
-              {rfq.addenda.length === 0 ? (
+              {!rfq.addenda || rfq.addenda.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">No addenda</p>
               ) : (
                 <div className="space-y-3">
                   {rfq.addenda.map((addendum) => (
-                    <div key={addendum.id} className="p-4 border rounded-lg">
+                    <div key={addendum._id} className="p-4 border rounded-lg">
                       <h4 className="font-medium">{addendum.title}</h4>
                       <p className="text-sm text-muted-foreground mt-1">{addendum.description}</p>
                       <p className="text-xs text-muted-foreground mt-2">
@@ -425,10 +561,10 @@ const RFQDetails = () => {
                 </>
               )}
 
-              {rfq.attachments.length > 0 && (
+              {rfq.attachments && rfq.attachments.length > 0 && (
                 <div className="space-y-2 pt-4 border-t">
                   {rfq.attachments.map((attachment) => (
-                    <div key={attachment.id} className="flex items-center justify-between p-3 border rounded">
+                    <div key={attachment._id} className="flex items-center justify-between p-3 border rounded">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4" />
                         <span className="text-sm">{attachment.name}</span>

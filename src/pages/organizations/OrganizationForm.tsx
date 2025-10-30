@@ -28,32 +28,35 @@ const OrganizationForm = () => {
 
   const selectedCurrency = watch('defaultCurrency');
 
-  useEffect(() => {
-    if (orgData?.data.organization) {
-      const org = orgData.data.organization;
-      setValue('name', org.name);
-      setValue('gstNumber', org.gstNumber);
-      setValue('address', org.address);
-      setValue('defaultCurrency', org.defaultCurrency);
-    }
-  }, [orgData, setValue]);
+// In OrganizationForm.tsx, update these parts:
 
-  const onSubmit = async (data: CreateOrganizationRequest) => {
-    try {
-      if (isEdit && id) {
-        await updateOrganization({ id, ...data }).unwrap();
-        toast.success('Organization updated successfully');
-      } else {
-        const response = await createOrganization(data).unwrap();
-        toast.success('Organization created successfully');
-        navigate(`/organizations/${response.data.organization.id}`);
-        return;
-      }
+useEffect(() => {
+  if (orgData?.data?.organization) {
+    const org = orgData.data.organization;
+    setValue('name', org.name);
+    setValue('gstNumber', org.gstNumber);
+    setValue('address', org.address);
+    setValue('defaultCurrency', org.defaultCurrency);
+  }
+}, [orgData, setValue]);
+
+const onSubmit = async (data: CreateOrganizationRequest) => {
+  try {
+    if (isEdit && id) {
+      await updateOrganization({ id, ...data }).unwrap();
+      toast.success('Organization updated successfully');
       navigate(`/organizations/${id}`);
-    } catch (error: any) {
-      toast.error(error?.data?.message || 'Failed to save organization');
+    } else {
+      const response = await createOrganization(data).unwrap();
+      toast.success('Organization created successfully');
+      // Navigate to the new organization detail page
+      navigate(`/organizations/${response.data.organization._id}`);
+      return;
     }
-  };
+  } catch (error: any) {
+    toast.error(error?.data?.message || 'Failed to save organization');
+  }
+};
 
   return (
     <div className="max-w-3xl space-y-6">

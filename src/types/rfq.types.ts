@@ -1,27 +1,40 @@
-export interface BOQItem {
-  id: string;
+export interface BOQ {
+  _id: string;
+  version: number;
+  createdBy: string;
+  items: BOQItem[];
+  attachments: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+
+export interface EligibilityCriteria {
+  title: string;
   description: string;
-  unit: string;
-  quantity: number;
-  estimatedRate?: number;
+  type: 'mandatory' | 'desirable';
+  weight?: number;
 }
 
 export interface EvaluationWeights {
-  price: number;
-  timeline: number;
-  experience: number;
-  quality: number;
+  priceWeight: number;
+  timelineWeight: number;
+  ratingWeight: number;
+  certificationWeight: number;
+  maxPrice: number;
+  maxTimeline: number;
 }
 
 export interface Addendum {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   createdAt: string;
 }
 
 export interface RFQAttachment {
-  id: string;
+  _id: string;
   name: string;
   url: string;
   size: number;
@@ -29,23 +42,28 @@ export interface RFQAttachment {
 }
 
 export interface RFQ {
-  id: string;
+  _id: string;
+  id?: string;
   title: string;
   description: string;
-  categoryId: string;
-  buildingId: string;
-  organizationId: string;
+  categoryId: any;
+  buildingId: any;
+  orgId: string;
+  createdBy: any;
   estBudgetMin: number;
   estBudgetMax: number;
   closeDate: string;
+  preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList: string[];
   evaluationWeights: EvaluationWeights;
-  boqItems: BOQItem[];
+  boqId: BOQ; // CHANGED: Replace boqItems with boqId
+  eligibilityCriteria: EligibilityCriteria[];
   status: 'draft' | 'published' | 'closed' | 'awarded';
+  tenderDocumentTemplate?: any;
   addenda: Addendum[];
   attachments: RFQAttachment[];
-  bidCount: number;
+  bidCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -58,20 +76,23 @@ export interface CreateRFQRequest {
   estBudgetMin: number;
   estBudgetMax: number;
   closeDate: string;
+  preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList?: string[];
   evaluationWeights: EvaluationWeights;
-  boqItems: Omit<BOQItem, 'id'>[];
+  boqItems: BOQItem[];
+  eligibilityCriteria?: EligibilityCriteria[];
+  tenderDocumentTemplate?: string;
 }
 
 export interface UpdateRFQRequest {
-  id: string;
+  _id: string;
   title?: string;
   description?: string;
   estBudgetMin?: number;
   estBudgetMax?: number;
   closeDate?: string;
-  boqItems?: Omit<BOQItem, 'id'>[];
+  boqItems?: BOQItem[];
 }
 
 export interface RFQFilters {

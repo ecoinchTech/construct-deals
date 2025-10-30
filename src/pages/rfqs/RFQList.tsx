@@ -83,7 +83,7 @@ const RFQList = () => {
         <>
           <div className="space-y-4">
             {rfqs.map((rfq) => (
-              <Link key={rfq.id} to={`/rfqs/${rfq.id}`}>
+              <Link key={rfq._id} to={`/rfqs/${rfq._id}`}>
                 <Card className="hover:shadow-lg transition-all hover:scale-[1.01]">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -103,7 +103,7 @@ const RFQList = () => {
                         <div>
                           <p className="text-xs text-muted-foreground">Budget</p>
                           <p className="font-medium">
-                            ${rfq.estBudgetMin.toLocaleString()} - ${rfq.estBudgetMax.toLocaleString()}
+                            ${rfq.estBudgetMin?.toLocaleString()} - ${rfq.estBudgetMax?.toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -119,15 +119,15 @@ const RFQList = () => {
                       <div className="flex items-center gap-2 text-sm">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-muted-foreground">Bids</p>
-                          <p className="font-medium">{rfq.bidCount}</p>
+                          <p className="text-xs text-muted-foreground">BOQ Items</p>
+                          <p className="font-medium">{rfq.boqId?.items?.length || 0}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                         <Building className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <p className="text-xs text-muted-foreground">BOQ Items</p>
-                          <p className="font-medium">{rfq.boqItems.length}</p>
+                          <p className="text-xs text-muted-foreground">Building</p>
+                          <p className="font-medium">{rfq.buildingId?.name}</p>
                         </div>
                       </div>
                     </div>
@@ -137,7 +137,7 @@ const RFQList = () => {
             ))}
           </div>
 
-          {pagination && pagination.totalPages > 1 && (
+          {pagination && pagination.pages > 1 && (
             <div className="flex justify-center gap-2">
               <Button
                 variant="outline"
@@ -148,13 +148,13 @@ const RFQList = () => {
               </Button>
               <div className="flex items-center gap-2 px-4">
                 <span className="text-sm">
-                  Page {pagination.page} of {pagination.totalPages}
+                  Page {pagination.page} of {pagination.pages}
                 </span>
               </div>
               <Button
                 variant="outline"
-                onClick={() => setFilters({ ...filters, page: Math.min(pagination.totalPages, filters.page! + 1) })}
-                disabled={filters.page === pagination.totalPages}
+                onClick={() => setFilters({ ...filters, page: Math.min(pagination.pages, filters.page! + 1) })}
+                disabled={filters.page === pagination.pages}
               >
                 Next
               </Button>

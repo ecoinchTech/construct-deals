@@ -9,8 +9,15 @@ interface PaginatedResponse<T> {
       page: number;
       limit: number;
       total: number;
-      totalPages: number;
+      pages: number;
     };
+  };
+}
+
+interface SingleRFQResponse {
+  success: boolean;
+  data: {
+    rfq: RFQ;
   };
 }
 
@@ -26,11 +33,11 @@ export const rfqApi = apiSlice.injectEndpoints({
       },
       providesTags: ['RFQ'],
     }),
-    getRFQ: builder.query<{ success: boolean; data: { rfq: RFQ } }, string>({
+    getRFQ: builder.query<SingleRFQResponse, string>({
       query: (id) => `/rfqs/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'RFQ', id }],
     }),
-    createRFQ: builder.mutation<{ success: boolean; data: { rfq: RFQ } }, CreateRFQRequest>({
+    createRFQ: builder.mutation<SingleRFQResponse, CreateRFQRequest>({
       query: (body) => ({
         url: '/rfqs',
         method: 'POST',
@@ -38,22 +45,22 @@ export const rfqApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['RFQ'],
     }),
-    updateRFQ: builder.mutation<{ success: boolean; data: { rfq: RFQ } }, UpdateRFQRequest>({
-      query: ({ id, ...body }) => ({
-        url: `/rfqs/${id}`,
+    updateRFQ: builder.mutation<SingleRFQResponse, UpdateRFQRequest>({
+      query: ({ _id, ...body }) => ({
+        url: `/rfqs/${_id}`,
         method: 'PUT',
         body,
       }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: 'RFQ', id }, 'RFQ'],
+      invalidatesTags: (_result, _error, { _id }) => [{ type: 'RFQ', _id }, 'RFQ'],
     }),
-    publishRFQ: builder.mutation<{ success: boolean; data: { rfq: RFQ } }, string>({
+    publishRFQ: builder.mutation<SingleRFQResponse, string>({
       query: (id) => ({
         url: `/rfqs/${id}/publish`,
         method: 'POST',
       }),
       invalidatesTags: (_result, _error, id) => [{ type: 'RFQ', id }, 'RFQ'],
     }),
-    addAddendum: builder.mutation<{ success: boolean; data: { rfq: RFQ } }, { id: string; title: string; description: string }>({
+    addAddendum: builder.mutation<SingleRFQResponse, { id: string; title: string; description: string }>({
       query: ({ id, title, description }) => ({
         url: `/rfqs/${id}/addenda`,
         method: 'POST',
@@ -61,7 +68,7 @@ export const rfqApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { id }) => [{ type: 'RFQ', id }],
     }),
-    uploadAttachment: builder.mutation<{ success: boolean; data: { rfq: RFQ } }, { id: string; files: FormData }>({
+    uploadAttachment: builder.mutation<SingleRFQResponse, { id: string; files: FormData }>({
       query: ({ id, files }) => ({
         url: `/rfqs/${id}/attachments`,
         method: 'POST',

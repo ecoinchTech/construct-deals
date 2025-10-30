@@ -10,12 +10,16 @@ import { Building, Plus, Search, MapPin, Square } from 'lucide-react';
 const BuildingList = () => {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const { data, isLoading } = useGetBuildingsQuery({ page, limit: 10 });
+const { data, isLoading } = useGetBuildingsQuery({ page, limit: 10 });
 
-  const filteredBuildings = data?.data.buildings.filter(building =>
-    building.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    building.address.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+// Safe data access with optional chaining
+const buildings = data?.data?.buildings || [];
+const pagination = data?.data?.pagination;
+
+const filteredBuildings = buildings.filter(building =>
+  building.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  building.address.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const getBuildingTypeColor = (type: string) => {
     const colors: Record<string, string> = {
@@ -80,7 +84,7 @@ const BuildingList = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBuildings.map((building) => (
-              <Link key={building.id} to={`/buildings/${building.id}`}>
+              <Link key={building._id} to={`/buildings/${building._id}`}>
                 <Card className="h-full transition-smooth hover:shadow-lg cursor-pointer">
                   <CardHeader>
                     <div className="flex items-start justify-between mb-3">
@@ -126,29 +130,29 @@ const BuildingList = () => {
         )}
 
         {/* Pagination */}
-        {data && data.data.pagination.totalPages > 1 && (
-          <div className="flex justify-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </Button>
-            <div className="flex items-center gap-2 px-4">
-              <span className="text-sm text-muted-foreground">
-                Page {page} of {data.data.pagination.totalPages}
-              </span>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => setPage(p => p + 1)}
-              disabled={page >= data.data.pagination.totalPages}
-            >
-              Next
-            </Button>
+       {pagination && pagination.totalPages > 1 && (
+        <div className="flex justify-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          <div className="flex items-center gap-2 px-4">
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {pagination.totalPages}
+            </span>
           </div>
-        )}
+          <Button
+            variant="outline"
+            onClick={() => setPage(p => p + 1)}
+            disabled={page >= pagination.totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
       </div>
   );
 };

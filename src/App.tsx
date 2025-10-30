@@ -30,6 +30,7 @@ import BidComparison from "./pages/bids/BidComparison";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import TenderDocumentTemplates from "./pages/admin/TenderDocument";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +93,7 @@ const App = () => (
               
               {/* Admin */}
               <Route path="/admin/vendors/pending" element={<VendorVerification />} />
+              <Route path="/admin/tender-templates" element={<TenderDocumentTemplates />} />
               
               {/* Settings - Placeholder */}
               <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground mt-2">Settings coming soon...</p></div>} />

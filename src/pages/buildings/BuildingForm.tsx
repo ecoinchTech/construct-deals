@@ -66,7 +66,7 @@ const BuildingForm = () => {
       } else {
         const response = await createBuilding(payload).unwrap();
         toast.success('Building created successfully');
-        navigate(`/buildings/${response.data.building.id}`);
+        navigate(`/buildings/${response.data.building._id}`);
         return;
       }
       navigate(`/buildings/${id}`);

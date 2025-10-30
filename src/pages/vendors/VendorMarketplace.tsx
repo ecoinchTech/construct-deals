@@ -78,7 +78,7 @@ const VendorMarketplace = () => {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="line-clamp-1">{vendor.companyName}</CardTitle>
-                      {vendor.featured && (
+                      {vendor.isFeatured && (
                         <Badge variant="default" className="ml-2">
                           <Award className="h-3 w-3 mr-1" />
                           Featured
@@ -87,10 +87,11 @@ const VendorMarketplace = () => {
                     </div>
                     <CardDescription className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-warning text-warning" />
-                      <span className="font-medium">{vendor.rating.toFixed(1)}</span>
-                      <span className="text-muted-foreground">({vendor.reviewCount} reviews)</span>
+                      <span className="font-medium">{(vendor.ratingAvg ?? 0).toFixed(1)}</span>
+                      <span className="text-muted-foreground">({vendor.totalRatings ?? 0} reviews)</span>
                     </CardDescription>
                   </CardHeader>
+
                   <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground line-clamp-3">
                       {vendor.profileSummary}
@@ -98,9 +99,9 @@ const VendorMarketplace = () => {
 
                     <div className="space-y-2">
                       <div className="flex flex-wrap gap-2">
-                        {vendor.categories.slice(0, 3).map((category) => (
-                          <Badge key={category} variant="secondary">
-                            {category}
+                        {vendor.categories.slice(0, 3).map((cat) => (
+                          <Badge key={cat._id} variant="secondary">
+                            {cat.name}
                           </Badge>
                         ))}
                         {vendor.categories.length > 3 && (
@@ -111,19 +112,27 @@ const VendorMarketplace = () => {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <MapPin className="h-4 w-4" />
                         <span className="line-clamp-1">
-                          {vendor.serviceCities.slice(0, 2).join(', ')}
-                          {vendor.serviceCities.length > 2 && ` +${vendor.serviceCities.length - 2}`}
+                          {vendor.serviceCities?.slice(0, 2).join(', ')}
+                          {vendor.serviceCities?.length > 2 && ` +${vendor.serviceCities.length - 2}`}
                         </span>
                       </div>
                     </div>
 
-                    <Button variant="outline" className="w-full">
-                      View Profile
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Link to={`/marketplace/vendors/${vendor._id}`}>
+                        View Profile
+                      </Link>
                     </Button>
+
                   </CardContent>
                 </Card>
               </Link>
             ))}
+
           </div>
 
           {pagination && pagination.totalPages > 1 && (
