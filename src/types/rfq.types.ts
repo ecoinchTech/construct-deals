@@ -6,6 +6,32 @@ export interface BOQItem {
   estimatedRate?: number;
 }
 
+export interface TenderDocumentTemplate {
+  id: string;
+  name: string;
+  description: string;
+  sections: TenderSection[];
+  createdAt: string;
+}
+
+export interface TenderSection {
+  title: string;
+  content: string;
+  order: number;
+}
+
+export interface EligibilityCriteria {
+  title: string;
+  description: string;
+  type: 'mandatory' | 'preferable';
+}
+
+export interface TechnicalSpecification {
+  title: string;
+  description: string;
+  isMandatory: boolean;
+}
+
 export interface EvaluationWeights {
   price: number;
   timeline: number;
@@ -38,8 +64,12 @@ export interface RFQ {
   estBudgetMin: number;
   estBudgetMax: number;
   closeDate: string;
+  preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList: string[];
+  tenderDocumentTemplate?: string;
+  eligibilityCriteria: EligibilityCriteria[];
+  technicalSpecifications: TechnicalSpecification[];
   evaluationWeights: EvaluationWeights;
   boqItems: BOQItem[];
   status: 'draft' | 'published' | 'closed' | 'awarded';
@@ -58,10 +88,28 @@ export interface CreateRFQRequest {
   estBudgetMin: number;
   estBudgetMax: number;
   closeDate: string;
+  preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList?: string[];
+  tenderDocumentTemplate?: string;
+  eligibilityCriteria?: EligibilityCriteria[];
+  technicalSpecifications?: TechnicalSpecification[];
   evaluationWeights: EvaluationWeights;
   boqItems: Omit<BOQItem, 'id'>[];
+}
+
+export interface PreBidQuery {
+  id: string;
+  rfqId: string;
+  vendorId: string;
+  vendorName: string;
+  category: string;
+  question: string;
+  response?: string;
+  respondedBy?: string;
+  status: 'pending' | 'answered';
+  createdAt: string;
+  respondedAt?: string;
 }
 
 export interface UpdateRFQRequest {

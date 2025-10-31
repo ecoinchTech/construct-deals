@@ -20,13 +20,14 @@ const BidSubmission = () => {
 
   const rfq = data?.data?.rfq;
 
-  const { register, handleSubmit, formState: { errors }, control, watch } = useForm<CreateBidRequest>({
+  const { register, handleSubmit, formState: { errors }, control, watch, setValue } = useForm<CreateBidRequest>({
     defaultValues: {
       rfqId: id!,
       breakdown: rfq?.boqItems.map(item => ({
-        boqItemId: item.id,
+        description: item.description,
         rate: 0,
-        amount: 0,
+        quantity: item.quantity,
+        subtotal: 0,
       })) || [],
     },
   });
@@ -39,7 +40,7 @@ const BidSubmission = () => {
   const breakdown = watch('breakdown');
 
   const calculateTotal = () => {
-    return breakdown?.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) || 0;
+    return breakdown?.reduce((sum, item) => sum + (Number(item.subtotal) || 0), 0) || 0;
   };
 
   const onSubmit = async (data: CreateBidRequest) => {
@@ -135,7 +136,7 @@ const BidSubmission = () => {
                   {rfq.boqItems.map((item, index) => {
                     const quantity = item.quantity;
                     const rate = watch(`breakdown.${index}.rate`) || 0;
-                    const amount = quantity * Number(rate);
+                    const subtotal = quantity * Number(rate);
 
                     return (
                       <tr key={item.id} className="border-b">
@@ -151,29 +152,16 @@ const BidSubmission = () => {
                               required: 'Rate is required',
                               valueAsNumber: true,
                               onChange: (e) => {
-                                const newAmount = quantity * Number(e.target.value);
-                                // @ts-ignore
-                                register(`breakdown.${index}.amount`).onChange({
-                                  target: { value: newAmount }
-                                });
+                                const newSubtotal = quantity * Number(e.target.value);
+                                setValue(`breakdown.${index}.subtotal`, newSubtotal);
                               }
                             })}
                             className="text-right"
                             placeholder="0.00"
                           />
-                          <input
-                            type="hidden"
-                            {...register(`breakdown.${index}.amount`, { valueAsNumber: true })}
-                            value={amount}
-                          />
-                          <input
-                            type="hidden"
-                            {...register(`breakdown.${index}.boqItemId`)}
-                            value={item.id}
-                          />
                         </td>
                         <td className="p-2 text-right font-medium">
-                          ${amount.toFixed(2)}
+                          ${subtotal.toFixed(2)}
                         </td>
                       </tr>
                     );

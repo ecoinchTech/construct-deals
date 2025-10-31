@@ -201,13 +201,13 @@ const BidComparison = () => {
                 </tr>
               </thead>
               <tbody>
-                {rfq.boqItems.map((item) => (
+                {rfq.boqItems.map((item, itemIndex) => (
                   <tr key={item.id} className="border-b">
                     <td className="p-2">{item.description}</td>
                     <td className="p-2 text-center">{item.unit}</td>
                     <td className="p-2 text-right">{item.quantity}</td>
                     {sortedBids.map((bid) => {
-                      const bidItem = bid.breakdown.find(b => b.boqItemId === item.id);
+                      const bidItem = bid.breakdown[itemIndex];
                       return (
                         <td key={bid.vendorId} className="p-2 text-right">
                           {bidItem ? `$${bidItem.rate.toFixed(2)}` : '-'}

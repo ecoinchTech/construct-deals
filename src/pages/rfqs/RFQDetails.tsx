@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import PreBidQueries from '@/components/rfq/PreBidQueries';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -207,6 +208,7 @@ const RFQDetails = () => {
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="boq">BOQ</TabsTrigger>
           <TabsTrigger value="bids">Bids ({bids.length})</TabsTrigger>
+          <TabsTrigger value="queries">Pre-Bid Queries</TabsTrigger>
           <TabsTrigger value="addenda">Addenda ({rfq.addenda.length})</TabsTrigger>
           <TabsTrigger value="attachments">Attachments ({rfq.attachments.length})</TabsTrigger>
         </TabsList>
@@ -312,10 +314,15 @@ const RFQDetails = () => {
                             <p className="text-sm text-muted-foreground">
                               Submitted {new Date(bid.createdAt).toLocaleDateString()}
                             </p>
+                            <Badge variant="outline" className="mt-1">{bid.status}</Badge>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold">${bid.totalAmount.toLocaleString()}</p>
-                            <p className="text-sm text-muted-foreground">{bid.timelineDays} days</p>
+                            <p className="text-2xl font-bold">
+                              ${(bid.financialBid?.totalAmount || bid.totalAmount || 0).toLocaleString()}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {bid.financialBid?.timelineDays || bid.timelineDays || 0} days
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -325,6 +332,10 @@ const RFQDetails = () => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="queries">
+          <PreBidQueries rfqId={id!} preBidDeadline={rfq.preBidQueryDeadline} />
         </TabsContent>
 
         <TabsContent value="addenda">
@@ -453,7 +464,7 @@ const RFQDetails = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Interested in this project?</p>
-                <p className="text-sm text-muted-foreground">Submit your bid before the closing date</p>
+                <p className="text-sm text-muted-foreground">Submit your two-stage bid before the closing date</p>
               </div>
               <Button asChild>
                 <Link to={`/rfqs/${id}/submit-bid`}>
