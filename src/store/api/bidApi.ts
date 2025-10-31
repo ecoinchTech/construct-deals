@@ -1,5 +1,5 @@
 import { apiSlice } from './apiSlice';
-import { Bid, CreateBidRequest, BidComparison } from '@/types/bid.types';
+import { Bid, CreateBidRequest, BidComparison, CreateTechnicalBidRequest, CreateFinancialBidRequest } from '@/types/bid.types';
 
 export const bidApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,6 +30,30 @@ export const bidApi = apiSlice.injectEndpoints({
       query: (rfqId) => `/bids/rfqs/${rfqId}/comparison`,
       providesTags: (_result, _error, rfqId) => [{ type: 'Bid', id: rfqId }],
     }),
+    createTechnicalBid: builder.mutation<{ success: boolean; data: { bid: Bid } }, CreateTechnicalBidRequest>({
+      query: ({ rfqId, ...body }) => ({
+        url: `/bids/rfqs/${rfqId}/technical`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { rfqId }) => [{ type: 'Bid', id: rfqId }, 'RFQ'],
+    }),
+    createFinancialBid: builder.mutation<{ success: boolean; data: { bid: Bid } }, CreateFinancialBidRequest>({
+      query: ({ rfqId, ...body }) => ({
+        url: `/bids/rfqs/${rfqId}/financial`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { rfqId }) => [{ type: 'Bid', id: rfqId }, 'RFQ'],
+    }),
+    uploadBidAttachment: builder.mutation<{ success: boolean; data: { bid: Bid } }, { bidId: string; files: FormData }>({
+      query: ({ bidId, files }) => ({
+        url: `/bids/${bidId}/attachments`,
+        method: 'POST',
+        body: files,
+      }),
+      invalidatesTags: (_result, _error, { bidId }) => [{ type: 'Bid', id: bidId }],
+    }),
   }),
 });
 
@@ -39,4 +63,7 @@ export const {
   useCreateBidMutation,
   useWithdrawBidMutation,
   useGetBidComparisonQuery,
+  useCreateTechnicalBidMutation,
+  useCreateFinancialBidMutation,
+  useUploadBidAttachmentMutation,
 } = bidApi;

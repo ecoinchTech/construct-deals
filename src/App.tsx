@@ -24,8 +24,10 @@ import VendorDetails from "./pages/vendors/VendorDetails";
 import VendorVerification from "./pages/admin/VendorVerification";
 import RFQList from "./pages/rfqs/RFQList";
 import RFQForm from "./pages/rfqs/RFQForm";
+import RFQFormEnhanced from "./pages/rfqs/RFQFormEnhanced";
 import RFQDetails from "./pages/rfqs/RFQDetails";
 import BidSubmission from "./pages/bids/BidSubmission";
+import BidSubmissionEnhanced from "./pages/bids/BidSubmissionEnhanced";
 import BidComparison from "./pages/bids/BidComparison";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
@@ -74,10 +76,39 @@ const App = () => (
               
               {/* RFQs */}
               <Route path="/rfqs" element={<RFQList />} />
-              <Route path="/rfqs/new" element={<RFQForm />} />
+              <Route 
+                path="/rfqs/new" 
+                element={
+                  <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                    <RFQFormEnhanced />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/rfqs/new-legacy" 
+                element={
+                  <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                    <RFQForm />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/rfqs/:id" element={<RFQDetails />} />
-              <Route path="/rfqs/:id/submit-bid" element={<BidSubmission />} />
-              <Route path="/rfqs/:id/bids" element={<BidComparison />} />
+              <Route 
+                path="/rfqs/:id/submit-bid" 
+                element={
+                  <ProtectedRoute allowedRoles={['vendor']}>
+                    <BidSubmissionEnhanced />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/rfqs/:id/bids" 
+                element={
+                  <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                    <BidComparison />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Contracts - Placeholder */}
               <Route path="/contracts" element={<div className="p-6"><h1 className="text-2xl font-bold">Contracts</h1><p className="text-muted-foreground mt-2">Contract management coming soon...</p></div>} />

@@ -17,6 +17,32 @@ export interface EligibilityCriteria {
   weight?: number;
 }
 
+export interface TenderDocumentTemplate {
+  id: string;
+  name: string;
+  description: string;
+  sections: TenderSection[];
+  createdAt: string;
+}
+
+export interface TenderSection {
+  title: string;
+  content: string;
+  order: number;
+}
+
+export interface EligibilityCriteria {
+  title: string;
+  description: string;
+  type: 'mandatory' | 'preferable';
+}
+
+export interface TechnicalSpecification {
+  title: string;
+  description: string;
+  isMandatory: boolean;
+}
+
 export interface EvaluationWeights {
   priceWeight: number;
   timelineWeight: number;
@@ -56,6 +82,9 @@ export interface RFQ {
   preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList: string[];
+  tenderDocumentTemplate?: string;
+  eligibilityCriteria: EligibilityCriteria[];
+  technicalSpecifications: TechnicalSpecification[];
   evaluationWeights: EvaluationWeights;
   boqId: BOQ; // CHANGED: Replace boqItems with boqId
   eligibilityCriteria: EligibilityCriteria[];
@@ -79,10 +108,27 @@ export interface CreateRFQRequest {
   preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList?: string[];
+  tenderDocumentTemplate?: string;
+  eligibilityCriteria?: EligibilityCriteria[];
+  technicalSpecifications?: TechnicalSpecification[];
   evaluationWeights: EvaluationWeights;
   boqItems: BOQItem[];
   eligibilityCriteria?: EligibilityCriteria[];
   tenderDocumentTemplate?: string;
+}
+
+export interface PreBidQuery {
+  id: string;
+  rfqId: string;
+  vendorId: string;
+  vendorName: string;
+  category: string;
+  question: string;
+  response?: string;
+  respondedBy?: string;
+  status: 'pending' | 'answered';
+  createdAt: string;
+  respondedAt?: string;
 }
 
 export interface UpdateRFQRequest {
