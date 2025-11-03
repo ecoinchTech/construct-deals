@@ -22,6 +22,15 @@ import VendorKYC from "./pages/vendors/VendorKYC";
 import VendorMarketplace from "./pages/vendors/VendorMarketplace";
 import VendorDetails from "./pages/vendors/VendorDetails";
 import VendorVerification from "./pages/admin/VendorVerification";
+import ContractList from "./pages/contracts/ContractList";
+import ContractDetails from "./pages/contracts/ContractDetails";
+import InvoiceList from "./pages/invoices/InvoiceList";
+import InvoiceForm from "./pages/invoices/InvoiceForm";
+import InvoiceDetails from "./pages/invoices/InvoiceDetails";
+import DisputeList from "./pages/disputes/DisputeList";
+import DisputeForm from "./pages/disputes/DisputeForm";
+import DisputeDetails from "./pages/disputes/DisputeDetails";
+import RatingForm from "./pages/ratings/RatingForm";
 import RFQList from "./pages/rfqs/RFQList";
 import RFQForm from "./pages/rfqs/RFQForm";
 import RFQFormEnhanced from "./pages/rfqs/RFQFormEnhanced";
@@ -109,17 +118,22 @@ const App = () => (
                 } 
               />
               
-              {/* Contracts - Placeholder */}
-              <Route path="/contracts" element={<div className="p-6"><h1 className="text-2xl font-bold">Contracts</h1><p className="text-muted-foreground mt-2">Contract management coming soon...</p></div>} />
-              
-              {/* Invoices - Placeholder */}
-              <Route path="/invoices" element={<div className="p-6"><h1 className="text-2xl font-bold">Invoices</h1><p className="text-muted-foreground mt-2">Invoice management coming soon...</p></div>} />
-              
-              {/* Ratings - Placeholder */}
-              <Route path="/ratings" element={<div className="p-6"><h1 className="text-2xl font-bold">Ratings</h1><p className="text-muted-foreground mt-2">Rating system coming soon...</p></div>} />
-              
-              {/* Disputes - Placeholder */}
-              <Route path="/disputes" element={<div className="p-6"><h1 className="text-2xl font-bold">Disputes</h1><p className="text-muted-foreground mt-2">Dispute management coming soon...</p></div>} />
+              {/* Contracts */}
+              <Route path="/contracts" element={<ContractList />} />
+              <Route path="/contracts/:id" element={<ContractDetails />} />
+
+              {/* Invoices */}
+              <Route path="/contracts/:contractId/invoices" element={<InvoiceList />} />
+              <Route path="/contracts/:contractId/invoices/new" element={<InvoiceForm />} />
+              <Route path="/invoices/:id" element={<InvoiceDetails />} />
+
+              {/* Ratings */}
+              <Route path="/contracts/:contractId/rate" element={<RatingForm />} />
+
+              {/* Disputes */}
+              <Route path="/disputes" element={<DisputeList />} />
+              <Route path="/disputes/new" element={<DisputeForm />} />
+              <Route path="/disputes/:id" element={<DisputeDetails />} />
               
               {/* Admin */}
               <Route path="/admin/vendors/pending" element={<VendorVerification />} />
