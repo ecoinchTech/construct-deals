@@ -1,3 +1,12 @@
+export interface BOQItem {
+  _id?: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  unitPrice?: number;
+  totalPrice?: number;
+}
+
 export interface BOQ {
   _id: string;
   version: number;
