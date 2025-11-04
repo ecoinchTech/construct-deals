@@ -3,14 +3,15 @@ import { Contract, CreateContractRequest, UpdateMilestoneProgressRequest } from 
 
 interface PaginatedResponse<T> {
   success: boolean;
+  count: number;
+  total: number;
+  pagination: {
+    page: number;
+    limit: number;
+    pages: number;
+  };
   data: {
     contracts: T[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-    };
   };
 }
 

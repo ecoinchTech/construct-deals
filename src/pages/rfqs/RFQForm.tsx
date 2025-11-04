@@ -51,6 +51,9 @@ const RFQForm = () => {
   const buildings = buildingsData?.data?.buildings || [];
   const categories = categoriesData?.data?.categories || [];
 
+alert(buildings);
+alert(categories);
+
   const watchBudgetMax = watch('estBudgetMax');
 
   // Update maxPrice when budget changes

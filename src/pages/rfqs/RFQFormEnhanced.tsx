@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, Plus, Trash2, FileText, Building, Calendar, DollarSign, Shield, CheckSquare } from 'lucide-react';
+import React from 'react';
 
 const RFQFormEnhanced = () => {
   const navigate = useNavigate();
@@ -27,12 +28,14 @@ const RFQFormEnhanced = () => {
     defaultValues: {
       visibility: 'public',
       evaluationWeights: {
-        price: 40,
-        timeline: 20,
-        experience: 20,
-        quality: 20,
+        priceWeight: 50,
+        timelineWeight: 20,
+        ratingWeight: 20,
+        certificationWeight: 10,
+        maxPrice: 0,
+        maxTimeline: 90
       },
-      boqItems: [{ description: '', unit: '', quantity: 0 }],
+      boqItems: [{ description: '', unit: '', quantity: 0, baselineRate: 0 }],
       eligibilityCriteria: [{ title: '', description: '', type: 'mandatory' }],
       technicalSpecifications: [{ title: '', description: '', isMandatory: true }],
     },
@@ -57,15 +60,67 @@ const RFQFormEnhanced = () => {
   const categories = categoriesData?.data?.categories || [];
   const templates = templatesData?.data?.templates || [];
 
-  const onSubmit = async (data: CreateRFQRequest) => {
-    try {
-      const result = await createRFQ(data).unwrap();
-      toast.success('RFQ created successfully');
-      navigate(`/rfqs/${result.data.rfq.id}`);
-    } catch (error: any) {
-      toast.error(error?.data?.message || 'Failed to create RFQ');
+const onSubmit = async (data: CreateRFQRequest) => {
+  try {
+    // Validate that buildingId and categoryId are present
+    if (!data.buildingId) {
+      toast.error('Please select a building');
+      return;
     }
-  };
+    if (!data.categoryId) {
+      toast.error('Please select a category');
+      return;
+    }
+
+    // Transform data to match backend API structure - use buildingId and categoryId as per Postman
+    const payload = {
+      title: data.title,
+      description: data.description,
+      buildingId: data.buildingId, // Use buildingId (not building)
+      categoryId: data.categoryId, // Use categoryId (not category)
+      estBudgetMin: data.estBudgetMin,
+      estBudgetMax: data.estBudgetMax,
+      closeDate: data.closeDate,
+      preBidQueryDeadline: data.preBidQueryDeadline,
+      visibility: data.visibility,
+      tenderDocumentTemplate: data.tenderDocumentTemplate,
+      eligibilityCriteria: data.eligibilityCriteria.filter(criteria => 
+        criteria.title && criteria.description // Remove empty criteria
+      ),
+      technicalSpecifications: data.technicalSpecifications.filter(spec => 
+        spec.title && spec.description // Remove empty specs
+      ),
+      evaluationWeights: {
+        ...data.evaluationWeights,
+        maxPrice: data.estBudgetMax // Set maxPrice from estBudgetMax
+      },
+      boqItems: data.boqItems.map(item => ({
+        description: item.description,
+        unit: item.unit,
+        quantity: item.quantity,
+        baselineRate: item.baselineRate || 0,
+        spec: item.spec || ''
+      }))
+    };
+
+    console.log('Submitting RFQ:', payload);
+    const result = await createRFQ(payload).unwrap();
+    toast.success('RFQ created successfully');
+    navigate(`/rfqs/${result.data.rfq._id}`);
+  } catch (error: any) {
+    console.error('RFQ creation error:', error);
+    toast.error(error?.data?.message || 'Failed to create RFQ');
+  }
+};
+
+// Add this effect to update maxPrice when budget changes
+React.useEffect(() => {
+  const budgetMax = watch('estBudgetMax');
+  if (budgetMax) {
+    setValue('evaluationWeights.maxPrice', budgetMax);
+  }
+}, [watch('estBudgetMax'), setValue]);
+
 
   const renderStep1 = () => (
     <div className="space-y-6">
@@ -112,7 +167,7 @@ const RFQFormEnhanced = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {buildings.map((building) => (
-                    <SelectItem key={building.id} value={building.id}>
+                    <SelectItem key={building._id} value={building._id}>
                       {building.name}
                     </SelectItem>
                   ))}
@@ -131,7 +186,7 @@ const RFQFormEnhanced = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
+                    <SelectItem key={category._id} value={category._id}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -149,7 +204,7 @@ const RFQFormEnhanced = () => {
               <Input
                 id="estBudgetMin"
                 type="number"
-                {...register('estBudgetMin', { 
+                {...register('estBudgetMin', {
                   required: 'Minimum budget is required',
                   valueAsNumber: true,
                 })}
@@ -165,7 +220,7 @@ const RFQFormEnhanced = () => {
               <Input
                 id="estBudgetMax"
                 type="number"
-                {...register('estBudgetMax', { 
+                {...register('estBudgetMax', {
                   required: 'Maximum budget is required',
                   valueAsNumber: true,
                 })}
@@ -211,7 +266,7 @@ const RFQFormEnhanced = () => {
               </SelectTrigger>
               <SelectContent>
                 {templates.map((template) => (
-                  <SelectItem key={template.id} value={template.id}>
+                  <SelectItem key={template._id} value={template._id}>
                     {template.name}
                   </SelectItem>
                 ))}
@@ -238,7 +293,7 @@ const RFQFormEnhanced = () => {
       </Card>
 
       <div className="flex justify-end">
-        <Button onClick={() => setStep(2)}>
+        <Button onClick={handleNextToStep2}>
           Next: Eligibility & Specifications
         </Button>
       </div>
@@ -290,7 +345,7 @@ const RFQFormEnhanced = () => {
                 </div>
                 <div>
                   <Label>Type *</Label>
-                  <Select 
+                  <Select
                     onValueChange={(value) => setValue(`eligibilityCriteria.${index}.type`, value as 'mandatory' | 'preferable')}
                     defaultValue="mandatory"
                   >
@@ -389,7 +444,7 @@ const RFQFormEnhanced = () => {
         <Button variant="outline" onClick={() => setStep(1)}>
           Previous
         </Button>
-        <Button onClick={() => setStep(3)}>
+        <Button onClick={handleNextToStep3}>
           Next: Bill of Quantities
         </Button>
       </div>
@@ -427,6 +482,9 @@ const RFQFormEnhanced = () => {
                     {...register(`boqItems.${index}.description`, { required: 'Description is required' })}
                     placeholder="Item description"
                   />
+                  {errors.boqItems?.[index]?.description && (
+                    <p className="text-sm text-destructive mt-1">{errors.boqItems[index]?.description?.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label>Unit *</Label>
@@ -434,6 +492,9 @@ const RFQFormEnhanced = () => {
                     {...register(`boqItems.${index}.unit`, { required: 'Unit is required' })}
                     placeholder="e.g., sqft, nos"
                   />
+                  {errors.boqItems?.[index]?.unit && (
+                    <p className="text-sm text-destructive mt-1">{errors.boqItems[index]?.unit?.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -442,21 +503,40 @@ const RFQFormEnhanced = () => {
                   <Label>Quantity *</Label>
                   <Input
                     type="number"
-                    {...register(`boqItems.${index}.quantity`, { 
+                    {...register(`boqItems.${index}.quantity`, {
                       required: 'Quantity is required',
                       valueAsNumber: true,
+                      min: { value: 1, message: 'Quantity must be at least 1' }
                     })}
                     placeholder="0"
                   />
+                  {errors.boqItems?.[index]?.quantity && (
+                    <p className="text-sm text-destructive mt-1">{errors.boqItems[index]?.quantity?.message}</p>
+                  )}
                 </div>
                 <div>
-                  <Label>Estimated Rate (Optional)</Label>
+                  <Label>Baseline Rate *</Label>
                   <Input
                     type="number"
-                    {...register(`boqItems.${index}.estimatedRate`, { valueAsNumber: true })}
+                    {...register(`boqItems.${index}.baselineRate`, {
+                      required: 'Baseline rate is required',
+                      valueAsNumber: true,
+                      min: { value: 0, message: 'Rate cannot be negative' }
+                    })}
                     placeholder="0"
                   />
+                  {errors.boqItems?.[index]?.baselineRate && (
+                    <p className="text-sm text-destructive mt-1">{errors.boqItems[index]?.baselineRate?.message}</p>
+                  )}
                 </div>
+              </div>
+
+              <div>
+                <Label>Specifications (Optional)</Label>
+                <Input
+                  {...register(`boqItems.${index}.spec`)}
+                  placeholder="Technical specifications..."
+                />
               </div>
             </div>
           ))}
@@ -464,7 +544,7 @@ const RFQFormEnhanced = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => appendBoq({ description: '', unit: '', quantity: 0 })}
+            onClick={() => appendBoq({ description: '', unit: '', quantity: 0, baselineRate: 0 })}
             className="w-full"
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -483,7 +563,24 @@ const RFQFormEnhanced = () => {
         </Button>
       </div>
     </div>
+
   );
+
+// Update navigation validation to check for the correct field names
+const handleNextToStep2 = () => {
+  const basicFields = watch(['title', 'description', 'buildingId', 'categoryId', 'estBudgetMin', 'estBudgetMax', 'closeDate']);
+  
+  if (!basicFields[0] || !basicFields[1] || !basicFields[2] || !basicFields[3] || !basicFields[4] || !basicFields[5] || !basicFields[6]) {
+    toast.error('Please fill all required fields in Basic Information');
+    return;
+  }
+  setStep(2);
+};
+
+
+  const handleNextToStep3 = () => {
+    setStep(3);
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

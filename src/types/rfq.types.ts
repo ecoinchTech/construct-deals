@@ -100,23 +100,40 @@ export interface RFQ {
 export interface CreateRFQRequest {
   title: string;
   description: string;
-  categoryId: string;
   buildingId: string;
+  categoryId: string;
   estBudgetMin: number;
   estBudgetMax: number;
   closeDate: string;
   preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
-  inviteList?: string[];
   tenderDocumentTemplate?: string;
-  eligibilityCriteria?: EligibilityCriteria[];
-  technicalSpecifications?: TechnicalSpecification[];
-  evaluationWeights: EvaluationWeights;
-  boqItems: BOQItem[];
-  eligibilityCriteria?: EligibilityCriteria[];
-  tenderDocumentTemplate?: string;
+  eligibilityCriteria: Array<{
+    title: string;
+    description: string;
+    type: 'mandatory' | 'preferable';
+  }>;
+  technicalSpecifications: Array<{
+    title: string;
+    description: string;
+    isMandatory: boolean;
+  }>;
+  evaluationWeights: {
+    priceWeight: number;
+    timelineWeight: number;
+    ratingWeight: number;
+    certificationWeight: number;
+    maxPrice: number;
+    maxTimeline: number;
+  };
+  boqItems: Array<{
+    description: string;
+    unit: string;
+    quantity: number;
+    baselineRate: number;
+    spec?: string;
+  }>;
 }
-
 export interface PreBidQuery {
   id: string;
   rfqId: string;
