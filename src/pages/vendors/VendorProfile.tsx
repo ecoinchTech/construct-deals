@@ -32,7 +32,7 @@ const VendorProfile = () => {
       setValue('panNumber', vendor.panNumber);
       setValue('profileSummary', vendor.profileSummary);
       setValue('serviceCities', vendor.serviceCities);
-      setValue('categories', vendor.categories);
+      setValue('categories', vendor.categories.map((c: any) => typeof c === 'string' ? c : c.name));
       setValue('portfolioUrls', vendor.portfolioUrls);
     }
   }, [vendor, setValue]);

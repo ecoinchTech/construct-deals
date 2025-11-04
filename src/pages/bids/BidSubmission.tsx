@@ -23,8 +23,8 @@ const BidSubmission = () => {
   const { register, handleSubmit, formState: { errors }, control, watch } = useForm<CreateBidRequest>({
     defaultValues: {
       rfqId: id!,
-      breakdown: rfq?.boqItems.map(item => ({
-        boqItemId: item.id,
+      breakdown: rfq?.boqId?.items?.map(item => ({
+        boqItemId: item._id || item.id,
         rate: 0,
         amount: 0,
       })) || [],
@@ -132,13 +132,13 @@ const BidSubmission = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {rfq.boqItems.map((item, index) => {
+                  {rfq.boqId?.items?.map((item, index) => {
                     const quantity = item.quantity;
                     const rate = watch(`breakdown.${index}.rate`) || 0;
                     const amount = quantity * Number(rate);
 
                     return (
-                      <tr key={item.id} className="border-b">
+                      <tr key={item._id || item.id || index} className="border-b">
                         <td className="p-2">{index + 1}</td>
                         <td className="p-2">{item.description}</td>
                         <td className="p-2 text-center">{item.unit}</td>
@@ -169,7 +169,7 @@ const BidSubmission = () => {
                           <input
                             type="hidden"
                             {...register(`breakdown.${index}.boqItemId`)}
-                            value={item.id}
+                            value={item._id || item.id}
                           />
                         </td>
                         <td className="p-2 text-right font-medium">

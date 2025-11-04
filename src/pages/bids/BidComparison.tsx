@@ -201,7 +201,7 @@ const BidComparison = () => {
                 </tr>
               </thead>
               <tbody>
-                {rfq.boqItems.map((item) => (
+                {rfq.boqId?.items?.map((item) => (
                   <tr key={item.id} className="border-b">
                     <td className="p-2">{item.description}</td>
                     <td className="p-2 text-center">{item.unit}</td>

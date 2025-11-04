@@ -43,7 +43,7 @@ const TenderDocumentTemplates = () => {
     search: searchTerm, 
     categoryId: categoryFilter 
   });
-  const { data: categoriesData } = useGetCategoriesQuery({});
+  const { data: categoriesData } = useGetCategoriesQuery();
   
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();

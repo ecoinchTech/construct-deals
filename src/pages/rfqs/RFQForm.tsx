@@ -33,7 +33,7 @@ const RFQForm = () => {
         maxPrice: 0,
         maxTimeline: 90
       },
-      boqItems: [{ description: '', unit: '', quantity: 0, baselineRate: 0 }],
+      boqItems: [{ description: '', unit: '', quantity: 0 }],
       eligibilityCriteria: []
     },
   });
@@ -283,7 +283,7 @@ const RFQForm = () => {
                   <Label>Baseline Rate</Label>
                   <Input
                     type="number"
-                    {...register(`boqItems.${index}.baselineRate`, { valueAsNumber: true })}
+                    {...register(`boqItems.${index}.unitPrice`, { valueAsNumber: true })}
                     placeholder="0"
                   />
                 </div>
@@ -291,9 +291,10 @@ const RFQForm = () => {
 
               <div>
                 <Label>Specifications</Label>
-                <Input
-                  {...register(`boqItems.${index}.spec`)}
+                <Textarea
+                  {...register(`boqItems.${index}.spec` as any)}
                   placeholder="Technical specifications..."
+                  rows={2}
                 />
               </div>
             </div>
@@ -302,7 +303,7 @@ const RFQForm = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => appendBOQ({ description: '', unit: '', quantity: 0, baselineRate: 0 })}
+            onClick={() => appendBOQ({ description: '', unit: '', quantity: 0 })}
             className="w-full"
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -405,7 +406,7 @@ const RFQForm = () => {
         <Button variant="outline" onClick={() => setStep(1)}>
           Previous
         </Button>
-        <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>
+        <Button type="button" onClick={handleSubmit(onSubmit)} disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create RFQ
         </Button>

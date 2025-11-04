@@ -65,8 +65,8 @@ const VendorDetails = () => {
                   <CardTitle className="text-2xl">{vendor.companyName}</CardTitle>
                   <CardDescription className="flex items-center gap-2 mt-2">
                     <Star className="h-5 w-5 fill-warning text-warning" />
-                    <span className="text-lg font-semibold">{(vendor.ratingAvg ?? 0).toFixed(1)}</span>
-                    <span className="text-muted-foreground">({vendor.totalRatings ?? 0} reviews)</span>
+                    <span className="text-lg font-semibold">{(vendor.rating ?? 0).toFixed(1)}</span>
+                    <span className="text-muted-foreground">({vendor.reviewCount ?? 0} reviews)</span>
                   </CardDescription>
 
                 </div>
@@ -133,8 +133,8 @@ const VendorDetails = () => {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {vendor.categories.map((category) => (
-                  <Badge key={category._id} variant="secondary">
-                    {category.name}
+                  <Badge key={category._id || category.name} variant="secondary">
+                    {typeof category === 'string' ? category : category.name}
                   </Badge>
                 ))}
               </div>

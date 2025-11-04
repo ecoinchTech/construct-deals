@@ -1,10 +1,13 @@
 export interface BOQItem {
   _id?: string;
+  id?: string;
   description: string;
   quantity: number;
   unit: string;
   unitPrice?: number;
   totalPrice?: number;
+  baselineRate?: number;
+  spec?: string;
 }
 
 export interface BOQ {

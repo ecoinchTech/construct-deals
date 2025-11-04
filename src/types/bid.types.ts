@@ -5,6 +5,7 @@ export interface BidBreakdownItem {
 }
 
 export interface Bid {
+  _id: string;
   id: string;
   rfqId: string;
   vendorId: string;
