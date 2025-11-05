@@ -3,7 +3,7 @@ export interface Vendor {
   id: string;
   userId: string;
   companyName: string;
-  categories: string[];
+  categories: Category[];
   serviceCities: string[];
   profileSummary: string;
   portfolioUrls: string[];
@@ -12,12 +12,20 @@ export interface Vendor {
   kycStatus: 'pending' | 'approved' | 'rejected';
   kycDocuments: KYCDocument[];
   rating: number;
+  ratingAvg?: number;
   reviewCount: number;
+  totalRatings?: number;
   featured: boolean;
+  isFeatured?: boolean;
   verifiedAt?: string;
   rejectionReason?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
 }
 
 export interface KYCDocument {

@@ -3,6 +3,7 @@ export interface BidBreakdownItem {
   rate: number;
   quantity: number;
   subtotal: number;
+  boqItemId: string;
 }
 
 export interface TeamMember {
@@ -44,13 +45,18 @@ export interface FinancialBid {
 }
 
 export interface BidSecurity {
-  type: 'bank_guarantee' | 'demand_draft' | 'fixed_deposit';
+  type: 'bank_guarantee' | 'demand_draft' | 'online_payment';
   amount: number;
   status: 'pending' | 'verified' | 'rejected';
+  bankName?: string;
+  guaranteeNumber?: string;
+  issueDate?: string;
+  expiryDate?: string;
   documentUrl?: string;
 }
 
 export interface Bid {
+  _id: string;
   id: string;
   rfqId: string;
   vendorId: string;
@@ -91,6 +97,16 @@ export interface CreateFinancialBidRequest {
   validityDays: number;
   breakdown: BidBreakdownItem[];
   paymentTerms: string;
+}
+
+export interface CreateBidSecurityRequest {
+  rfqId: string;
+  type: 'bank_guarantee' | 'demand_draft' | 'online_payment';
+  amount: number;
+  bankName?: string;
+  guaranteeNumber?: string;
+  issueDate?: string;
+  expiryDate?: string;
 }
 
 // Legacy interface for backward compatibility

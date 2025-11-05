@@ -103,8 +103,8 @@ const VendorVerification = () => {
                     <div>
                       <p className="text-sm text-muted-foreground">Categories</p>
                       <div className="flex flex-wrap gap-2 mt-1">
-                        {vendor.categories.slice(0, 3).map((cat) => (
-                          <Badge key={cat} variant="outline">{cat}</Badge>
+                        {vendor.categories.slice(0, 3).map((cat, idx) => (
+                          <Badge key={typeof cat === 'string' ? cat : (cat._id || idx)} variant="outline">{typeof cat === 'string' ? cat : cat.name}</Badge>
                         ))}
                         {vendor.categories.length > 3 && (
                           <Badge variant="outline">+{vendor.categories.length - 3}</Badge>

@@ -23,8 +23,8 @@ const BidSubmission = () => {
   const { register, handleSubmit, formState: { errors }, control, watch, setValue } = useForm<CreateBidRequest>({
     defaultValues: {
       rfqId: id!,
-      breakdown: rfq?.boqItems.map(item => ({
-        description: item.description,
+      breakdown: rfq?.boqId?.items?.map(item => ({
+        boqItemId: item._id || item.id,
         rate: 0,
         quantity: item.quantity,
         subtotal: 0,
@@ -133,13 +133,13 @@ const BidSubmission = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {rfq.boqItems.map((item, index) => {
+                  {rfq.boqId?.items?.map((item, index) => {
                     const quantity = item.quantity;
                     const rate = watch(`breakdown.${index}.rate`) || 0;
                     const subtotal = quantity * Number(rate);
 
                     return (
-                      <tr key={item.id} className="border-b">
+                      <tr key={item._id || item.id || index} className="border-b">
                         <td className="p-2">{index + 1}</td>
                         <td className="p-2">{item.description}</td>
                         <td className="p-2 text-center">{item.unit}</td>
@@ -158,6 +158,16 @@ const BidSubmission = () => {
                             })}
                             className="text-right"
                             placeholder="0.00"
+                          />
+                          <input
+                            type="hidden"
+                            {...register(`breakdown.${index}.amount`, { valueAsNumber: true })}
+                            value={amount}
+                          />
+                          <input
+                            type="hidden"
+                            {...register(`breakdown.${index}.boqItemId`)}
+                            value={item._id || item.id}
                           />
                         </td>
                         <td className="p-2 text-right font-medium">

@@ -78,7 +78,9 @@ const BidComparison = () => {
               <p className="text-sm text-muted-foreground">Highest evaluation score</p>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-bold text-primary">{topBid.finalScore.toFixed(1)}</p>
+              <p className="text-3xl font-bold text-primary">
+                {topBid.finalScore ? topBid.finalScore.toFixed(1) : '0.0'}
+              </p>
               <p className="text-sm text-muted-foreground">Total Score</p>
             </div>
           </div>
@@ -146,26 +148,26 @@ const BidComparison = () => {
                     <td className="p-3 text-right">{bid.timelineDays} days</td>
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <span>{bid.priceScore.toFixed(1)}</span>
+                        <span>{bid.priceScore ? bid.priceScore.toFixed(1) : '0.0'}</span>
                         <TrendingUp className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </td>
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <span>{bid.timelineScore.toFixed(1)}</span>
+                        <span>{bid.timelineScore ? bid.timelineScore.toFixed(1) : '0.0'}</span>
                         <Clock className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </td>
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <span>{bid.experienceScore.toFixed(1)}</span>
+                        <span>{bid.experienceScore ? bid.experienceScore.toFixed(1) : '0.0'}</span>
                         <Star className="h-3 w-3 text-muted-foreground" />
                       </div>
                     </td>
-                    <td className="p-3 text-right">{bid.qualityScore.toFixed(1)}</td>
+                    <td className="p-3 text-right">{bid.qualityScore ? bid.qualityScore.toFixed(1) : '0.0'}</td>
                     <td className="p-3 text-right">
                       <span className={`text-lg font-bold ${index === 0 ? 'text-primary' : ''}`}>
-                        {bid.finalScore.toFixed(1)}
+                        {bid.finalScore ? bid.finalScore.toFixed(1) : '0.0'}
                       </span>
                     </td>
                     <td className="p-3 text-center">
@@ -201,22 +203,26 @@ const BidComparison = () => {
                 </tr>
               </thead>
               <tbody>
-                {rfq.boqItems.map((item, itemIndex) => (
-                  <tr key={item.id} className="border-b">
+                {rfq.boqId?.items?.map((item, itemIndex) => (
+                  <tr key={item.id || itemIndex} className="border-b">
                     <td className="p-2">{item.description}</td>
                     <td className="p-2 text-center">{item.unit}</td>
                     <td className="p-2 text-right">{item.quantity}</td>
+
                     {sortedBids.map((bid) => {
-                      const bidItem = bid.breakdown[itemIndex];
+                      const bidItem = bid?.breakdown?.[itemIndex]; // ✅ Safe optional chaining
                       return (
                         <td key={bid.vendorId} className="p-2 text-right">
-                          {bidItem ? `$${bidItem.rate.toFixed(2)}` : '-'}
+                          {bidItem?.rate !== undefined
+                            ? `$${bidItem.rate.toFixed(2)}`
+                            : '-'}
                         </td>
                       );
                     })}
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
         </CardContent>

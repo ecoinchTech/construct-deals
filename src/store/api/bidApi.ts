@@ -1,5 +1,5 @@
 import { apiSlice } from './apiSlice';
-import { Bid, CreateBidRequest, BidComparison, CreateTechnicalBidRequest, CreateFinancialBidRequest } from '@/types/bid.types';
+import { Bid, CreateBidRequest, BidComparison, CreateTechnicalBidRequest, CreateFinancialBidRequest, CreateBidSecurityRequest } from '@/types/bid.types';
 
 export const bidApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -54,6 +54,14 @@ export const bidApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { bidId }) => [{ type: 'Bid', id: bidId }],
     }),
+    createBidSecurity: builder.mutation<{ success: boolean; data: { bid: Bid } }, CreateBidSecurityRequest>({
+      query: ({ rfqId, ...body }) => ({
+        url: `/bids/rfqs/${rfqId}/security`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { rfqId }) => [{ type: 'Bid', id: rfqId }, 'RFQ'],
+    }),
   }),
 });
 
@@ -66,4 +74,5 @@ export const {
   useCreateTechnicalBidMutation,
   useCreateFinancialBidMutation,
   useUploadBidAttachmentMutation,
+  useCreateBidSecurityMutation,
 } = bidApi;
