@@ -157,17 +157,17 @@ const BidSubmission = () => {
                               }
                             })}
                             className="text-right"
-                            placeholder="0.00"
-                          />
-                          <input
-                            type="hidden"
-                            {...register(`breakdown.${index}.amount`, { valueAsNumber: true })}
-                            value={amount}
-                          />
-                          <input
-                            type="hidden"
-                            {...register(`breakdown.${index}.boqItemId`)}
-                            value={item._id || item.id}
+                          placeholder="0.00"
+                        />
+                        <input
+                          type="hidden"
+                          {...register(`breakdown.${index}.subtotal`, { valueAsNumber: true })}
+                          value={subtotal}
+                        />
+                        <input
+                          type="hidden"
+                          {...register(`breakdown.${index}.boqItemId`)}
+                          value={item._id || item.id}
                           />
                         </td>
                         <td className="p-2 text-right font-medium">

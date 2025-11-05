@@ -6,6 +6,7 @@ export interface TenderSection {
 
 export interface TenderDocumentTemplate {
   id: string;
+  _id?: string;
   name: string;
   description: string;
   sections: TenderSection[];

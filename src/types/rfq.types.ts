@@ -25,16 +25,8 @@ export interface BOQ {
 export interface EligibilityCriteria {
   title: string;
   description: string;
-  type: 'mandatory' | 'desirable';
+  type: 'mandatory' | 'desirable' | 'preferable';
   weight?: number;
-}
-
-export interface TenderDocumentTemplate {
-  id: string;
-  name: string;
-  description: string;
-  sections: TenderSection[];
-  createdAt: string;
 }
 
 export interface TenderSection {
@@ -43,10 +35,12 @@ export interface TenderSection {
   order: number;
 }
 
-export interface EligibilityCriteria {
-  title: string;
+export interface TenderDocumentTemplate {
+  id: string;
+  name: string;
   description: string;
-  type: 'mandatory' | 'preferable';
+  sections: TenderSection[];
+  createdAt: string;
 }
 
 export interface TechnicalSpecification {
@@ -94,14 +88,12 @@ export interface RFQ {
   preBidQueryDeadline?: string;
   visibility: 'public' | 'private';
   inviteList: string[];
-  tenderDocumentTemplate?: string;
+  tenderDocumentTemplate?: string | any;
   eligibilityCriteria: EligibilityCriteria[];
   technicalSpecifications: TechnicalSpecification[];
   evaluationWeights: EvaluationWeights;
   boqId: BOQ; // CHANGED: Replace boqItems with boqId
-  eligibilityCriteria: EligibilityCriteria[];
   status: 'draft' | 'published' | 'closed' | 'awarded';
-  tenderDocumentTemplate?: any;
   addenda: Addendum[];
   attachments: RFQAttachment[];
   bidCount?: number;

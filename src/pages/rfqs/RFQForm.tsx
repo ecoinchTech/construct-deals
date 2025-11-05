@@ -286,7 +286,7 @@ alert(categories);
                   <Label>Baseline Rate</Label>
                   <Input
                     type="number"
-                    {...register(`boqItems.${index}.unitPrice`, { valueAsNumber: true })}
+                    {...register(`boqItems.${index}.baselineRate`, { valueAsNumber: true })}
                     placeholder="0"
                   />
                 </div>
@@ -306,7 +306,7 @@ alert(categories);
           <Button
             type="button"
             variant="outline"
-            onClick={() => appendBOQ({ description: '', unit: '', quantity: 0 })}
+            onClick={() => appendBOQ({ description: '', unit: '', quantity: 0, baselineRate: 0, spec: '' })}
             className="w-full"
           >
             <Plus className="mr-2 h-4 w-4" />

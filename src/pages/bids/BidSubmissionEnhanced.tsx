@@ -154,6 +154,7 @@ const BidSubmissionEnhanced = () => {
         totalAmount,
         breakdown: formData.breakdown.map(item => ({
           boqItemId: item.boqItemId,
+          description: (item as any).description || '',
           rate: Number(item.rate),
           quantity: Number(item.quantity),
           subtotal: Number(item.rate) * Number(item.quantity),
@@ -476,7 +477,7 @@ const BidSubmissionEnhanced = () => {
                           />
                           {field.description}
                         </td>
-                        <td className="p-2">{field.unit || '-'}</td>
+                        <td className="p-2">{(field as any).unit || '-'}</td>
                         <td className="p-2 text-right">
                           <input
                             type="number"

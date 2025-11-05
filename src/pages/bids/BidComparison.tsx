@@ -1,22 +1,44 @@
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useGetBidComparisonQuery } from '@/store/api/bidApi';
 import { useGetRFQQuery } from '@/store/api/rfqApi';
+import { useCreateContractMutation } from '@/store/api/contractApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, TrendingUp, Clock, Star, Award } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, TrendingUp, Clock, Star, Award, Trophy } from 'lucide-react';
+import { toast } from 'sonner';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { format } from 'date-fns';
 
 const BidComparison = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: rfqData, isLoading: rfqLoading } = useGetRFQQuery(id!);
   const { data: comparisonData, isLoading: comparisonLoading } = useGetBidComparisonQuery(id!);
+  const [createContract, { isLoading: isCreatingContract }] = useCreateContractMutation();
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const [showAwardDialog, setShowAwardDialog] = useState(false);
+  const [selectedBidVendorId, setSelectedBidVendorId] = useState<string>('');
+  const [contractDetails, setContractDetails] = useState({
+    startDate: '',
+    endDate: '',
+    terms: '',
+  });
 
   const rfq = rfqData?.data?.rfq;
   const comparison = comparisonData?.data?.comparison || [];
   const weights = comparisonData?.data?.evaluationWeights;
 
   const isLoading = rfqLoading || comparisonLoading;
+  const isFacilityManager = user?.role === 'facility_manager' || user?.role === 'org_owner';
 
   if (isLoading) {
     return (
@@ -49,6 +71,71 @@ const BidComparison = () => {
 
   const sortedBids = [...comparison].sort((a, b) => b.finalScore - a.finalScore);
   const topBid = sortedBids[0];
+
+  const handleAwardContract = async () => {
+    try {
+      // Find the selected bid data
+      const selectedBid = comparison.find((bid) => bid.vendorId === selectedBidVendorId);
+      
+      if (!selectedBid || !rfq) {
+        toast.error('Unable to find bid details');
+        return;
+      }
+
+      // Create milestone structure (split payment evenly for now)
+      const milestones = [
+        {
+          title: 'Project Kickoff',
+          description: 'Initial milestone upon contract acceptance',
+          amount: selectedBid.totalAmount * 0.3,
+          dueDate: contractDetails.startDate,
+        },
+        {
+          title: 'Mid-Project Review',
+          description: 'Milestone for mid-project completion',
+          amount: selectedBid.totalAmount * 0.4,
+          dueDate: new Date(new Date(contractDetails.startDate).getTime() + (new Date(contractDetails.endDate).getTime() - new Date(contractDetails.startDate).getTime()) / 2).toISOString(),
+        },
+        {
+          title: 'Project Completion',
+          description: 'Final milestone upon project completion',
+          amount: selectedBid.totalAmount * 0.3,
+          dueDate: contractDetails.endDate,
+        },
+      ];
+
+      const payload = {
+        rfqId: id!,
+        bidId: selectedBid.vendorId, // Assuming vendorId is used as bidId
+        title: rfq.title,
+        description: `Contract for ${rfq.title}`,
+        totalAmount: selectedBid.totalAmount,
+        startDate: contractDetails.startDate,
+        endDate: contractDetails.endDate,
+        milestones,
+        terms: contractDetails.terms || 'Standard contract terms and conditions apply.',
+      };
+
+      const result = await createContract(payload).unwrap();
+      toast.success('Contract awarded successfully!');
+      setShowAwardDialog(false);
+      
+      // Navigate to contract details
+      if (result?.data?.contract?.id) {
+        navigate(`/contracts/${result.data.contract.id}`);
+      } else {
+        navigate('/contracts');
+      }
+    } catch (error: any) {
+      console.error('Error awarding contract:', error);
+      toast.error(error?.data?.message || 'Failed to award contract');
+    }
+  };
+
+  const openAwardDialog = (vendorId: string) => {
+    setSelectedBidVendorId(vendorId);
+    setShowAwardDialog(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -171,9 +258,21 @@ const BidComparison = () => {
                       </span>
                     </td>
                     <td className="p-3 text-center">
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
+                      <div className="flex gap-2 justify-center">
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                        {isFacilityManager && rfq?.status !== 'awarded' && (
+                          <Button 
+                            size="sm" 
+                            onClick={() => openAwardDialog(bid.vendorId)}
+                            className="gap-1"
+                          >
+                            <Trophy className="h-3 w-3" />
+                            Award
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -235,6 +334,110 @@ const BidComparison = () => {
           </Link>
         </Button>
       </div>
+
+      {/* Award Contract Dialog */}
+      <Dialog open={showAwardDialog} onOpenChange={setShowAwardDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-primary" />
+              Award Contract
+            </DialogTitle>
+            <DialogDescription>
+              Create a contract for the selected vendor. This will change the RFQ status to "awarded".
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Selected Vendor</Label>
+              <Input 
+                value={comparison.find(b => b.vendorId === selectedBidVendorId)?.vendorName || ''} 
+                disabled 
+                className="bg-muted"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Total Amount</Label>
+                <Input 
+                  value={`₹${comparison.find(b => b.vendorId === selectedBidVendorId)?.totalAmount?.toLocaleString() || 0}`} 
+                  disabled 
+                  className="bg-muted"
+                />
+              </div>
+              <div>
+                <Label>Timeline</Label>
+                <Input 
+                  value={`${comparison.find(b => b.vendorId === selectedBidVendorId)?.timelineDays || 0} days`} 
+                  disabled 
+                  className="bg-muted"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="startDate">Contract Start Date *</Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  value={contractDetails.startDate}
+                  onChange={(e) => setContractDetails({ ...contractDetails, startDate: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="endDate">Contract End Date *</Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  value={contractDetails.endDate}
+                  onChange={(e) => setContractDetails({ ...contractDetails, endDate: e.target.value })}
+                  min={contractDetails.startDate}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="terms">Terms & Conditions</Label>
+              <Textarea
+                id="terms"
+                value={contractDetails.terms}
+                onChange={(e) => setContractDetails({ ...contractDetails, terms: e.target.value })}
+                placeholder="Enter contract terms and conditions..."
+                rows={4}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                If left empty, standard terms will be applied
+              </p>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg space-y-2">
+              <h4 className="font-semibold text-sm">Milestone Structure (Auto-generated)</h4>
+              <div className="text-sm space-y-1">
+                <p>• Kickoff (30%): Due on start date</p>
+                <p>• Mid-project (40%): Due at mid-point</p>
+                <p>• Completion (30%): Due on end date</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAwardDialog(false)} disabled={isCreatingContract}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleAwardContract} 
+              disabled={!contractDetails.startDate || !contractDetails.endDate || isCreatingContract}
+            >
+              {isCreatingContract ? 'Creating Contract...' : 'Award Contract'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
