@@ -82,6 +82,8 @@ const BidComparison = () => {
         return;
       }
 
+      console.log('selectedBid ', selectedBid);
+
       // Create milestone structure (split payment evenly for now)
       const milestones = [
         {
@@ -106,15 +108,17 @@ const BidComparison = () => {
 
       const payload = {
         rfqId: id!,
-        bidId: selectedBid.vendorId, // Assuming vendorId is used as bidId
-        title: rfq.title,
-        description: `Contract for ${rfq.title}`,
-        totalAmount: selectedBid.totalAmount,
-        startDate: contractDetails.startDate,
-        endDate: contractDetails.endDate,
-        milestones,
-        terms: contractDetails.terms || 'Standard contract terms and conditions apply.',
+        bidId: selectedBid.bidId, // Assuming vendorId is used as bidId
+
+        // title: rfq.title,
+        // description: `Contract for ${rfq.title}`,
+        // totalAmount: selectedBid.totalAmount,
+        // startDate: contractDetails.startDate,
+        // endDate: contractDetails.endDate,
+        // milestones,
+        // terms: contractDetails.terms || 'Standard contract terms and conditions apply.',
       };
+      console.log(payload);
 
       const result = await createContract(payload).unwrap();
       toast.success('Contract awarded successfully!');

@@ -1,5 +1,7 @@
+// src/store/api/contractApi.ts
+
 import { apiSlice } from './apiSlice';
-import { Contract, CreateContractRequest, UpdateMilestoneProgressRequest } from '@/types/contract.types';
+import { Contract, CreateContractRequest, UpdateMilestoneProgressRequest, ApproveMilestoneRequest, RejectMilestoneRequest } from '@/types/contract.types';
 
 interface PaginatedResponse<T> {
   success: boolean;
@@ -46,33 +48,42 @@ export const contractApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, id) => [{ type: 'Contract', id }, 'Contract'],
     }),
-    declineContract: builder.mutation<{ success: boolean; data: { contract: Contract } }, string>({
-      query: (id) => ({
+    declineContract: builder.mutation<{ success: boolean; data: { contract: Contract } }, { id: string; reason: string }>({
+      query: ({ id, reason }) => ({
         url: `/contracts/${id}/decline`,
+        method: 'POST',
+        body: { reason },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Contract', id }, 'Contract'],
+    }),
+   updateMilestoneProgress: builder.mutation<{ success: boolean; data: { contract: Contract } }, UpdateMilestoneProgressRequest>({
+  query: ({ contractId, milestoneId, ...body }) => ({
+    url: `/contracts/${contractId}/milestones/${milestoneId}/progress`,
+    method: 'POST',
+    body,
+  }),
+  invalidatesTags: (_result, _error, { contractId }) => [{ type: 'Contract', id: contractId }],
+}),
+   approveMilestone: builder.mutation<{ success: boolean; data: { contract: Contract } }, ApproveMilestoneRequest>({
+  query: ({ contractId, milestoneId, comment }) => ({
+    url: `/contracts/${contractId}/milestones/${milestoneId}/approve`,
+    method: 'POST',
+    body: { comment },
+  }),
+  invalidatesTags: (_result, _error, { contractId }) => [{ type: 'Contract', id: contractId }],
+}),
+     approveContract: builder.mutation<{ success: boolean; data: { contract: Contract } }, string>({
+      query: (id) => ({
+        url: `/contracts/${id}/approve`,
         method: 'POST',
       }),
       invalidatesTags: (_result, _error, id) => [{ type: 'Contract', id }, 'Contract'],
     }),
-    updateMilestoneProgress: builder.mutation<{ success: boolean; data: { contract: Contract } }, UpdateMilestoneProgressRequest>({
-      query: ({ contractId, milestoneId, ...body }) => ({
-        url: `/contracts/${contractId}/milestones/${milestoneId}/progress`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: (_result, _error, { contractId }) => [{ type: 'Contract', id: contractId }],
-    }),
-    approveMilestone: builder.mutation<{ success: boolean; data: { contract: Contract } }, { contractId: string; milestoneId: string }>({
-      query: ({ contractId, milestoneId }) => ({
-        url: `/contracts/${contractId}/milestones/${milestoneId}/approve`,
-        method: 'POST',
-      }),
-      invalidatesTags: (_result, _error, { contractId }) => [{ type: 'Contract', id: contractId }],
-    }),
-    rejectMilestone: builder.mutation<{ success: boolean; data: { contract: Contract } }, { contractId: string; milestoneId: string; reason: string }>({
-      query: ({ contractId, milestoneId, reason }) => ({
+    rejectMilestone: builder.mutation<{ success: boolean; data: { contract: Contract } }, RejectMilestoneRequest>({
+      query: ({ contractId, milestoneId, comment }) => ({
         url: `/contracts/${contractId}/milestones/${milestoneId}/reject`,
         method: 'POST',
-        body: { reason },
+        body: { comment },
       }),
       invalidatesTags: (_result, _error, { contractId }) => [{ type: 'Contract', id: contractId }],
     }),
@@ -84,6 +95,7 @@ export const {
   useGetContractQuery,
   useCreateContractMutation,
   useAcceptContractMutation,
+  useApproveContractMutation,
   useDeclineContractMutation,
   useUpdateMilestoneProgressMutation,
   useApproveMilestoneMutation,

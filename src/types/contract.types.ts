@@ -1,50 +1,88 @@
+// src/types/contract.types.ts
+
+export interface ProgressUpdate {
+  updatedBy: string;
+  updateDate: string;
+  comment: string;
+  attachments: Array<{
+    name: string;
+    url: string;
+  }>;
+  percentage: number;
+}
+
 export interface Milestone {
-  id: string;
+  _id: string;
   title: string;
   description: string;
-  amount: number;
   dueDate: string;
+  amount: number;
   status: 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected';
-  progress?: number;
-  completedAt?: string;
+  progressUpdates: ProgressUpdate[];
 }
 
 export interface Contract {
-  id: string;
-  rfqId: string;
-  bidId: string;
-  vendorId: string;
-  organizationId: string;
-  buildingId: string;
-  title: string;
-  description: string;
-  totalAmount: number;
-  startDate: string;
-  endDate: string;
-  status: 'draft' | 'active' | 'completed' | 'terminated';
+  _id: string;
+  rfqId: {
+    _id: string;
+    title: string;
+    description: string;
+  };
+  awardedTo: {
+    _id: string;
+    companyName: string;
+    ratingAvg?: number;
+  };
+  signedByOrg: boolean;
+  signedByVendor: boolean;
+  finalBOQId: {
+    _id: string;
+    version: number;
+  };
   milestones: Milestone[];
-  terms: string;
+  paymentTerms: string;
+  status: 'pending_vendor_acceptance' | 'pending_org_approval' | 'active' | 'completed' | 'declined';
+  contractDocument?: {
+    name: string;
+    url: string;
+  };
+  startDate?: string;
+  expectedEndDate: string;
+  actualEndDate?: string;
+  totalContractValue: number;
+  createdBy: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   createdAt: string;
   updatedAt: string;
-  vendorName?: string;
-  organizationName?: string;
 }
 
 export interface CreateContractRequest {
   rfqId: string;
   bidId: string;
-  title: string;
-  description: string;
-  totalAmount: number;
-  startDate: string;
-  endDate: string;
-  milestones: Omit<Milestone, 'id' | 'status' | 'completedAt'>[];
-  terms: string;
 }
 
 export interface UpdateMilestoneProgressRequest {
   contractId: string;
   milestoneId: string;
-  progress: number;
-  notes?: string;
+  comment: string;
+  percentage: number;
+  attachments?: Array<{
+    name: string;
+    url: string;
+  }>;
+}
+
+export interface ApproveMilestoneRequest {
+  contractId: string;
+  milestoneId: string;
+  comment?: string;
+}
+
+export interface RejectMilestoneRequest {
+  contractId: string;
+  milestoneId: string;
+  comment?: string;
 }
