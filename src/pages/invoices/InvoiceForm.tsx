@@ -101,7 +101,7 @@ export default function InvoiceForm() {
                 </SelectTrigger>
                 <SelectContent>
                   {completedMilestones.map((milestone) => (
-                    <SelectItem key={milestone.id} value={milestone.id}>
+                    <SelectItem key={milestone._id} value={milestone._id}>
                       {milestone.title} - ₹{milestone.amount.toLocaleString()}
                     </SelectItem>
                   ))}
