@@ -66,8 +66,8 @@ export default function DisputeForm() {
                 </SelectTrigger>
                 <SelectContent>
                   {activeContracts.map((contract) => (
-                    <SelectItem key={contract.id} value={contract.id}>
-                      {contract.title} - {contract.vendorName}
+                    <SelectItem key={contract._id} value={contract._id}>
+                      {contract.rfqId.title} - {contract.awardedTo.companyName}
                     </SelectItem>
                   ))}
                 </SelectContent>

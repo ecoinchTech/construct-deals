@@ -28,6 +28,11 @@ import {
   ChevronDown,
   Store,
   Briefcase,
+  Bell,
+  FileBarChart,
+  CreditCard,
+  FolderOpen,
+  MessageSquare,
 } from 'lucide-react';
 
 const DashboardLayout = () => {
@@ -68,6 +73,8 @@ const DashboardLayout = () => {
       title: 'Main',
       items: [
         { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+        { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
       ],
     },
     {
@@ -84,20 +91,22 @@ const DashboardLayout = () => {
       items: [
         ...(user?.role !== 'vendor' ? [{ href: '/vendors', label: 'Vendors', icon: Users }] : []),
         { href: '/contracts', label: 'Contracts', icon: Package },
-        { href: '/invoices', label: 'Invoices', icon: Receipt },
+        { href: '/dashboard/payments', label: 'Payments', icon: CreditCard },
+        { href: '/dashboard/documents', label: 'Documents', icon: FolderOpen },
       ],
     },
     {
       title: 'Support',
       items: [
-        { href: '/ratings', label: 'Ratings', icon: Star },
         { href: '/disputes', label: 'Disputes', icon: AlertCircle },
       ],
     },
-    ...(user?.role === 'super_admin' ? [{
+    ...((user?.role === 'super_admin' || user?.role === 'org_owner') ? [{
       title: 'Admin',
       items: [
-        { href: '/admin/vendors/pending', label: 'Vendor Verification', icon: ShieldCheck },
+        ...(user?.role === 'super_admin' ? [{ href: '/admin/vendors/pending', label: 'Vendor Verification', icon: ShieldCheck }] : []),
+        ...((user?.role === 'super_admin' || user?.role === 'org_owner') ? [{ href: '/dashboard/users', label: 'Users', icon: Users }] : []),
+        ...((user?.role === 'super_admin' || user?.role === 'org_owner' || user?.role === 'facility_manager') ? [{ href: '/dashboard/reports', label: 'Reports', icon: FileBarChart }] : []),
       ],
     }] : []),
   ];

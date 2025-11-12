@@ -125,8 +125,8 @@ const BidComparison = () => {
       setShowAwardDialog(false);
       
       // Navigate to contract details
-      if (result?.data?.contract?.id) {
-        navigate(`/contracts/${result.data.contract.id}`);
+      if (result?.data?.contract?._id) {
+        navigate(`/contracts/${result.data.contract._id}`);
       } else {
         navigate('/contracts');
       }

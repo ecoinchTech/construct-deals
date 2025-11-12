@@ -123,6 +123,7 @@ export interface CreateBidRequest {
 }
 
 export interface BidComparison {
+  bidId: string;
   vendorId: string;
   vendorName: string;
   totalAmount: number;
