@@ -33,10 +33,9 @@ import DisputeForm from "./pages/disputes/DisputeForm";
 import DisputeDetails from "./pages/disputes/DisputeDetails";
 import RatingForm from "./pages/ratings/RatingForm";
 import RFQList from "./pages/rfqs/RFQList";
-import RFQForm from "./pages/rfqs/RFQForm";
+// import RFQForm from "./pages/rfqs/RFQForm";
 import RFQFormEnhanced from "./pages/rfqs/RFQFormEnhanced";
 import RFQDetails from "./pages/rfqs/RFQDetails";
-import BidSubmission from "./pages/bids/BidSubmission";
 import BidSubmissionEnhanced from "./pages/bids/BidSubmissionEnhanced";
 import BidComparison from "./pages/bids/BidComparison";
 import Unauthorized from "./pages/Unauthorized";
@@ -95,14 +94,14 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
-              <Route 
+              {/* <Route 
                 path="/rfqs/new-legacy" 
                 element={
                   <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
                     <RFQForm />
                   </ProtectedRoute>
                 } 
-              />
+              /> */}
               <Route path="/rfqs/:id" element={<RFQDetails />} />
               <Route 
                 path="/rfqs/:id/submit-bid" 
@@ -167,3 +166,25 @@ const App = () => (
 );
 
 export default App;
+
+
+// // src/App.js
+// import React from 'react';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import TestMarketplace from './testing/TestMarketplace';
+// import './index.css';
+
+// function App() {
+//   return (
+//     <Router>
+//       <div className="App">
+//         <Routes>
+//           <Route path="/" element={<TestMarketplace />} />
+//           <Route path="/test" element={<TestMarketplace />} />
+//         </Routes>
+//       </div>
+//     </Router>
+//   );
+// }
+
+// export default App;

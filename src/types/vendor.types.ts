@@ -26,6 +26,7 @@ export interface Vendor {
 export interface Category {
   _id: string;
   name: string;
+  parentId?: string | null;
 }
 
 export interface KYCDocument {
@@ -65,4 +66,8 @@ export interface VendorFilters {
   search?: string;
   page?: number;
   limit?: number;
+}
+
+interface Props {
+  categories: Category[];
 }
