@@ -43,6 +43,14 @@ import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import TenderDocumentTemplates from "./pages/admin/TenderDocument";
+import UserList from "./pages/users/UserList";
+import UserForm from "./pages/users/UserForm";
+import NotificationCenter from "./pages/notifications/NotificationCenter";
+import ProfileSettings from "./pages/profile/ProfileSettings";
+import ReportList from "./pages/reports/ReportList";
+import PaymentList from "./pages/payments/PaymentList";
+import DocumentList from "./pages/documents/DocumentList";
+import MessageCenter from "./pages/messages/MessageCenter";
 
 const queryClient = new QueryClient();
 
@@ -141,6 +149,57 @@ const App = () => (
               {/* Admin */}
               <Route path="/admin/vendors/pending" element={<VendorVerification />} />
               <Route path="/admin/tender-templates" element={<TenderDocumentTemplates />} />
+              
+              {/* User Management */}
+              <Route 
+                path="/dashboard/users" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
+                    <UserList />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/users/new" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
+                    <UserForm />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/users/:id/edit" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
+                    <UserForm />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Notifications */}
+              <Route path="/dashboard/notifications" element={<NotificationCenter />} />
+              
+              {/* Profile */}
+              <Route path="/dashboard/profile" element={<ProfileSettings />} />
+              
+              {/* Reports */}
+              <Route 
+                path="/dashboard/reports" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner', 'facility_manager']}>
+                    <ReportList />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Payments */}
+              <Route path="/dashboard/payments" element={<PaymentList />} />
+              
+              {/* Documents */}
+              <Route path="/dashboard/documents" element={<DocumentList />} />
+              
+              {/* Messages */}
+              <Route path="/dashboard/messages" element={<MessageCenter />} />
               
               {/* Settings - Placeholder */}
               <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground mt-2">Settings coming soon...</p></div>} />
