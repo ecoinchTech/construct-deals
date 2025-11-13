@@ -2,15 +2,26 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetProductQuery } from '@/store/api/productApi';
 import { useAddToCartMutation } from '@/store/api/cartApi';
+import { useCreateQuotationMutation } from '@/store/api/quotationApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { ShoppingCart, ArrowLeft, Star, Package, Truck, Shield } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Star, Package, Truck, Shield, FileText } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
