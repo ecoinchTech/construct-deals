@@ -51,10 +51,60 @@ export interface UpdatePaymentRequest {
 
 export interface PaymentFilters {
   invoiceId?: string;
+  orderId?: string;
   status?: PaymentStatus;
   method?: PaymentMethod;
   startDate?: string;
   endDate?: string;
   page?: number;
   limit?: number;
+}
+
+// Phase 2 Payment Types
+export interface ProcessPaymentRequest {
+  orderId: string;
+  paymentMethod: PaymentMethod;
+  billingAddress: {
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+    gstin?: string;
+  };
+  paymentDetails?: {
+    cardNumber?: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+    cvv?: string;
+    upiId?: string;
+    walletId?: string;
+  };
+}
+
+export interface RefundPaymentRequest {
+  paymentId: string;
+  amount: number;
+  reason: string;
+}
+
+export interface PaymentHistoryParams {
+  page?: number;
+  limit?: number;
+  status?: PaymentStatus;
+}
+
+export interface PaymentHistoryResponse {
+  success: boolean;
+  message: string;
+  data: {
+    payments: Payment[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  };
+  timestamp: string;
 }
