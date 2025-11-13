@@ -3,11 +3,11 @@ import axios from 'axios';
 
 // Create axios instance
 const api = axios.create({
-  baseURL:  'https://ecoinch-in-v3-27-10-25-1.onrender.com/api',
+  baseURL:  'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
   }
-});git 
+});
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
