@@ -386,7 +386,7 @@ const TestMarketplace = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await productAPI.getProducts();
+      const response = await productAPI.getProducts({});
       setProducts(response.data.data.products);
     } catch (error) {
       console.error('Failed to fetch products:', error);
@@ -404,7 +404,7 @@ const TestMarketplace = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await orderAPI.getOrders();
+      const response = await orderAPI.getOrders({});
       setOrders(response.data.data.orders);
     } catch (error) {
       console.error('Failed to fetch orders:', error);
@@ -792,7 +792,7 @@ const TestMarketplace = () => {
                       value={vendorForm.description}
                       onChange={handleVendorChange}
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      rows="3"
+                      rows={3}
                     />
                   </div>
 
@@ -1112,7 +1112,7 @@ const TestMarketplace = () => {
                           value={productForm.description}
                           onChange={handleProductChange}
                           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          rows="3"
+                          rows={3}
                           required
                         />
                       </div>

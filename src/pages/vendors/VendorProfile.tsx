@@ -77,12 +77,12 @@ const VendorProfile = () => {
       setValue('profileSummary', vendor.profileSummary || '');
 
       setValue('serviceCities', Array.isArray(vendor.serviceCities)
-        ? vendor.serviceCities.join(', ')
-        : '');
+        ? vendor.serviceCities
+        : []);
 
       setValue('portfolioUrls', Array.isArray(vendor.portfolioUrls)
-        ? vendor.portfolioUrls.join(', ')
-        : '');
+        ? vendor.portfolioUrls
+        : []);
 
       const vendorCategories = Array.isArray(vendor.categories)
         ? vendor.categories.map((c: any) => c.id || c._id)
@@ -123,14 +123,18 @@ const VendorProfile = () => {
         categories: Array.isArray(data.categories)
           ? data.categories
           : typeof data.categories === 'string'
-            ? data.categories.split(',').map((c) => c.trim())
+            ? (data.categories as string).split(',').map((c) => c.trim())
             : [],
-        serviceCities: typeof data.serviceCities === 'string'
-          ? data.serviceCities.split(',').map((c) => c.trim())
-          : data.serviceCities || [],
-        portfolioUrls: typeof data.portfolioUrls === 'string'
-          ? data.portfolioUrls.split(',').map((c) => c.trim())
-          : data.portfolioUrls || [],
+        serviceCities: Array.isArray(data.serviceCities)
+          ? data.serviceCities
+          : typeof data.serviceCities === 'string'
+            ? (data.serviceCities as string).split(',').map((c) => c.trim())
+            : [],
+        portfolioUrls: Array.isArray(data.portfolioUrls)
+          ? data.portfolioUrls
+          : typeof data.portfolioUrls === 'string'
+            ? (data.portfolioUrls as string).split(',').map((c) => c.trim())
+            : [],
       };
 
       console.log("🚀 Submitting payload:", payload);
