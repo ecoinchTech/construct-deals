@@ -229,7 +229,8 @@ const ProductDetails = () => {
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </Button>
-                <Button variant="outline" className="flex-1" onClick={() => setPurchaseType('quotation')}>
+                <Button variant="outline" className="flex-1" onClick={handleRequestQuote}>
+                  <FileText className="h-4 w-4 mr-2" />
                   Request Quote
                 </Button>
               </div>
