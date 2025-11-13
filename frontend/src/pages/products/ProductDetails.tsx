@@ -62,11 +62,66 @@ const ProductDetails = () => {
         variantId: selectedVariant,
         vendorProductId: selectedVendor,
         quantity,
-        type: purchaseType,
+        type: 'standard',
       }).unwrap();
       toast.success('Added to cart');
     } catch (error: any) {
       toast.error(error?.data?.message || 'Failed to add to cart');
+    }
+  };
+
+  const handleRequestQuote = () => {
+    if (!selectedVariant || !selectedVendor) {
+      toast.error('Please select a variant and vendor');
+      return;
+    }
+    setShowQuotationDialog(true);
+  };
+
+  const handleSubmitQuotation = async () => {
+    if (!quotationData.requirements || !quotationData.address || !quotationData.city || 
+        !quotationData.state || !quotationData.pincode) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const vendorProduct = product?.vendorProducts?.find(vp => vp._id === selectedVendor);
+      
+      await createQuotation({
+        productId: product!._id,
+        variantId: selectedVariant,
+        vendorId: vendorProduct?.vendor._id || '',
+        quantity,
+        requirements: quotationData.requirements,
+        deliveryLocation: {
+          address: quotationData.address,
+          city: quotationData.city,
+          state: quotationData.state,
+          pincode: quotationData.pincode,
+        },
+        expectedDeliveryDate: quotationData.expectedDeliveryDate || undefined,
+        budget: quotationData.minBudget && quotationData.maxBudget ? {
+          min: Number(quotationData.minBudget),
+          max: Number(quotationData.maxBudget),
+        } : undefined,
+      }).unwrap();
+      
+      toast.success('Quotation request submitted successfully');
+      setShowQuotationDialog(false);
+      setQuotationData({
+        requirements: '',
+        address: '',
+        city: '',
+        state: '',
+        pincode: '',
+        expectedDeliveryDate: '',
+        minBudget: '',
+        maxBudget: '',
+      });
+      navigate('/quotations');
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to submit quotation request');
     }
   };
 
