@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create axios instance
 const api = axios.create({
-  baseURL:  'http://localhost:5000/api',
+  baseURL:  'https://ecoinch-in-v3-27-10-25-1.onrender.com/api',
   headers: {
     'Content-Type': 'application/json'
   }
