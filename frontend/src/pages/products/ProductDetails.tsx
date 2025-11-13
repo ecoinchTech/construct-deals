@@ -28,11 +28,25 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { data, isLoading } = useGetProductQuery(id!);
   const [addToCart] = useAddToCartMutation();
+  const [createQuotation] = useCreateQuotationMutation();
 
   const [selectedVariant, setSelectedVariant] = useState('');
   const [selectedVendor, setSelectedVendor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [purchaseType, setPurchaseType] = useState<'standard' | 'quotation'>('standard');
+  
+  // Quotation dialog state
+  const [showQuotationDialog, setShowQuotationDialog] = useState(false);
+  const [quotationData, setQuotationData] = useState({
+    requirements: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    expectedDeliveryDate: '',
+    minBudget: '',
+    maxBudget: '',
+  });
 
   const product = data?.data;
 
