@@ -304,6 +304,125 @@ const ProductDetails = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Quotation Request Dialog */}
+      <Dialog open={showQuotationDialog} onOpenChange={setShowQuotationDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Request Quotation</DialogTitle>
+            <DialogDescription>
+              Fill in the details below to request a custom quotation from the vendor.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="requirements">Requirements *</Label>
+              <Textarea
+                id="requirements"
+                placeholder="Describe your specific requirements, customization needs, or any special instructions..."
+                value={quotationData.requirements}
+                onChange={(e) => setQuotationData({ ...quotationData, requirements: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="address">Delivery Address *</Label>
+                <Input
+                  id="address"
+                  placeholder="Street address"
+                  value={quotationData.address}
+                  onChange={(e) => setQuotationData({ ...quotationData, address: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">City *</Label>
+                <Input
+                  id="city"
+                  placeholder="City"
+                  value={quotationData.city}
+                  onChange={(e) => setQuotationData({ ...quotationData, city: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="state">State *</Label>
+                <Input
+                  id="state"
+                  placeholder="State"
+                  value={quotationData.state}
+                  onChange={(e) => setQuotationData({ ...quotationData, state: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pincode">Pincode *</Label>
+                <Input
+                  id="pincode"
+                  placeholder="Pincode"
+                  value={quotationData.pincode}
+                  onChange={(e) => setQuotationData({ ...quotationData, pincode: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="expectedDate">Expected Delivery Date</Label>
+              <Input
+                id="expectedDate"
+                type="date"
+                value={quotationData.expectedDeliveryDate}
+                onChange={(e) => setQuotationData({ ...quotationData, expectedDeliveryDate: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="minBudget">Minimum Budget (₹)</Label>
+                <Input
+                  id="minBudget"
+                  type="number"
+                  placeholder="Min budget"
+                  value={quotationData.minBudget}
+                  onChange={(e) => setQuotationData({ ...quotationData, minBudget: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="maxBudget">Maximum Budget (₹)</Label>
+                <Input
+                  id="maxBudget"
+                  type="number"
+                  placeholder="Max budget"
+                  value={quotationData.maxBudget}
+                  onChange={(e) => setQuotationData({ ...quotationData, maxBudget: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Product Summary</h4>
+              <div className="text-sm space-y-1">
+                <p><strong>Product:</strong> {product?.name}</p>
+                <p><strong>Variant:</strong> {product?.variants.find(v => v._id === selectedVariant)?.name}</p>
+                <p><strong>Quantity:</strong> {quantity}</p>
+                <p><strong>Vendor:</strong> {product?.vendorProducts?.find(vp => vp._id === selectedVendor)?.vendor.companyName}</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowQuotationDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmitQuotation}>
+              Submit Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
