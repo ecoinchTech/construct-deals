@@ -1,5 +1,14 @@
 import { apiSlice } from './apiSlice';
-import { Payment, CreatePaymentRequest, UpdatePaymentRequest, PaymentFilters } from '@/types/payment.types';
+import {
+  Payment,
+  CreatePaymentRequest,
+  UpdatePaymentRequest,
+  PaymentFilters,
+  ProcessPaymentRequest,
+  RefundPaymentRequest,
+  PaymentHistoryParams,
+  PaymentHistoryResponse,
+} from '@/types/payment.types';
 
 export const paymentApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,6 +39,39 @@ export const paymentApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Payment', 'Invoice'],
     }),
+    
+    // Phase 2 Payment Endpoints
+    processPayment: builder.mutation<
+      { success: boolean; message: string; data: Payment },
+      ProcessPaymentRequest
+    >({
+      query: (body) => ({
+        url: '/payments/process',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Payment', 'Order'],
+    }),
+    
+    refundPayment: builder.mutation<
+      { success: boolean; message: string; data: Payment },
+      RefundPaymentRequest
+    >({
+      query: (body) => ({
+        url: '/payments/refund',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Payment', 'Order'],
+    }),
+    
+    getPaymentHistory: builder.query<PaymentHistoryResponse, PaymentHistoryParams>({
+      query: (params) => ({
+        url: '/payments/history',
+        params,
+      }),
+      providesTags: ['Payment'],
+    }),
   }),
 });
 
@@ -38,4 +80,7 @@ export const {
   useGetPaymentByIdQuery,
   useCreatePaymentMutation,
   useUpdatePaymentMutation,
+  useProcessPaymentMutation,
+  useRefundPaymentMutation,
+  useGetPaymentHistoryQuery,
 } = paymentApi;
