@@ -23,11 +23,15 @@ export interface CartItem {
     _id: string;
     companyName: string;
   };
+  vendorProduct: {
+    _id: string;
+  };
   quantity: number;
   price: number;
   compareAtPrice?: number;
   type: 'standard' | 'quotation';
-  deliveryOption?: {
+  quotationId?: string;
+  deliveryOption: {
     name: string;
     estimatedDays: number;
     charges: number;
@@ -48,6 +52,15 @@ export interface Cart {
     code: string;
     discount: number;
     discountType: 'percentage' | 'fixed';
+  };
+  pricing: {
+    subtotal: number;
+    deliveryCharges: number;
+    discount: number;
+    tax: number;
+    total: number;
+    standardItemsTotal: number;
+    quotationItemsTotal: number;
   };
   summary: {
     subtotal: number;

@@ -33,6 +33,8 @@ import {
   CreditCard,
   FolderOpen,
   MessageSquare,
+  ShoppingCart,
+  Tag,
 } from 'lucide-react';
 
 const DashboardLayout = () => {
@@ -75,6 +77,7 @@ const DashboardLayout = () => {
         { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
         { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
+        { href: '/cart', label: 'Cart', icon: ShoppingCart },
       ],
     },
     {
@@ -84,13 +87,16 @@ const DashboardLayout = () => {
         ...(user?.role !== 'vendor' ? [{ href: '/buildings', label: 'Buildings', icon: Building }] : []),
         { href: '/rfqs', label: 'RFQs', icon: FileText },
         ...(user?.role === 'vendor' ? [{ href: '/marketplace/vendors', label: 'Marketplace', icon: Store }] : []),
+        ...(user?.role === 'vendor' ? [{ href: '/vendors/products', label: 'My Products', icon: Package }] : []),
       ],
     },
     {
       title: 'Business',
       items: [
         ...(user?.role !== 'vendor' ? [{ href: '/vendors', label: 'Vendors', icon: Users }] : []),
+        { href: '/marketplace/products', label: 'Products', icon: Tag },
         { href: '/contracts', label: 'Contracts', icon: Package },
+        { href: '/orders', label: 'Orders', icon: Receipt },
         { href: '/dashboard/payments', label: 'Payments', icon: CreditCard },
         { href: '/dashboard/documents', label: 'Documents', icon: FolderOpen },
       ],
@@ -105,6 +111,7 @@ const DashboardLayout = () => {
       title: 'Admin',
       items: [
         ...(user?.role === 'super_admin' ? [{ href: '/admin/vendors/pending', label: 'Vendor Verification', icon: ShieldCheck }] : []),
+        ...(user?.role === 'super_admin' ? [{ href: '/admin/product-categories', label: 'Product Categories', icon: Tag }] : []),
         ...((user?.role === 'super_admin' || user?.role === 'org_owner') ? [{ href: '/dashboard/users', label: 'Users', icon: Users }] : []),
         ...((user?.role === 'super_admin' || user?.role === 'org_owner' || user?.role === 'facility_manager') ? [{ href: '/dashboard/reports', label: 'Reports', icon: FileBarChart }] : []),
       ],
