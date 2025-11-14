@@ -50,6 +50,15 @@ import ReportList from "./pages/reports/ReportList";
 import PaymentList from "./pages/payments/PaymentList";
 import DocumentList from "./pages/documents/DocumentList";
 import MessageCenter from "./pages/messages/MessageCenter";
+import ProductCategoryManagement from "./pages/products/ProductCategoryManagement";
+import ProductMarketplace from "./pages/products/ProductMarketplace";
+import ProductDetails from "./pages/products/ProductDetails";
+import ShoppingCart from "./pages/cart/ShoppingCart";
+import VendorProductList from "./pages/vendors/VendorProductList";
+import VendorProductForm from "./pages/vendors/VendorProductForm";
+import OrderList from "./pages/orders/OrderList";
+import OrderDetails from "./pages/orders/OrderDetails";
+import Checkout from "./pages/checkout/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -139,6 +148,31 @@ const App = () => (
 
               {/* Ratings */}
               <Route path="/contracts/:contractId/rate" element={<RatingForm />} />
+
+              {/* Vendor Routes */}
+              <Route path="/vendors" element={<VendorMarketplace />} />
+              <Route path="/vendors/:id" element={<VendorDetails />} />
+              <Route path="/marketplace/vendors" element={<VendorMarketplace />} />
+              <Route path="/vendors/profile" element={<VendorProfile />} />
+              <Route path="/vendors/kyc" element={<VendorKYC />} />
+              <Route path="/vendors/products" element={<VendorProductList />} />
+              <Route path="/vendors/products/add" element={<VendorProductForm />} />
+              <Route path="/vendors/products/:id" element={<VendorProductForm />} />
+              
+              {/* Product & E-commerce Routes */}
+              <Route path="/marketplace/products" element={<ProductMarketplace />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/cart" element={<ShoppingCart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/orders" element={<OrderList />} />
+              <Route path="/orders/:id" element={<OrderDetails />} />
+              
+              {/* Admin Product Category Management */}
+              <Route path="/admin/product-categories" element={
+                <ProtectedRoute allowedRoles={['super_admin']}>
+                  <ProductCategoryManagement />
+                </ProtectedRoute>
+              } />
 
               {/* Disputes */}
               <Route path="/disputes" element={<DisputeList />} />
