@@ -59,7 +59,8 @@ import VendorProductForm from "./pages/vendors/VendorProductForm";
 import OrderList from "./pages/orders/OrderList";
 import OrderDetails from "./pages/orders/OrderDetails";
 import Checkout from "./pages/checkout/Checkout";
-
+import ProductManagementList from "./pages/admin/ProductManagementList";
+import AdminProductForm from "./pages/admin/AdminProductForm";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -70,48 +71,48 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth/login" element={<Login />} />
-            <Route path="/auth/register" element={<Register />} />
-            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-            
-            {/* Protected routes with DashboardLayout */}
-            <Route element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }>
-              <Route path="/dashboard" element={<Dashboard />} />
-              
-              {/* Organizations */}
-              <Route path="/organizations" element={<OrganizationList />} />
-              <Route path="/organizations/new" element={<OrganizationForm />} />
-              <Route path="/organizations/:id" element={<OrganizationDetails />} />
-              <Route path="/organizations/:id/edit" element={<OrganizationForm />} />
-              
-              {/* Buildings */}
-              <Route path="/buildings" element={<BuildingList />} />
-              <Route path="/buildings/new" element={<BuildingForm />} />
-              <Route path="/buildings/:id" element={<BuildingDetails />} />
-              <Route path="/buildings/:id/edit" element={<BuildingForm />} />
-              
-              {/* Vendors */}
-              <Route path="/marketplace/vendors" element={<VendorMarketplace />} />
-              <Route path="/marketplace/vendors/:id" element={<VendorDetails />} />
-              <Route path="/vendors" element={<VendorMarketplace />} />
-              
-              {/* RFQs */}
-              <Route path="/rfqs" element={<RFQList />} />
-              <Route 
-                path="/rfqs/new" 
-                element={
-                  <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
-                    <RFQFormEnhanced />
-                  </ProtectedRoute>
-                } 
-              />
-              {/* <Route 
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth/login" element={<Login />} />
+              <Route path="/auth/register" element={<Register />} />
+              <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+
+              {/* Protected routes with DashboardLayout */}
+              <Route element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }>
+                <Route path="/dashboard" element={<Dashboard />} />
+
+                {/* Organizations */}
+                <Route path="/organizations" element={<OrganizationList />} />
+                <Route path="/organizations/new" element={<OrganizationForm />} />
+                <Route path="/organizations/:id" element={<OrganizationDetails />} />
+                <Route path="/organizations/:id/edit" element={<OrganizationForm />} />
+
+                {/* Buildings */}
+                <Route path="/buildings" element={<BuildingList />} />
+                <Route path="/buildings/new" element={<BuildingForm />} />
+                <Route path="/buildings/:id" element={<BuildingDetails />} />
+                <Route path="/buildings/:id/edit" element={<BuildingForm />} />
+
+                {/* Vendors */}
+                <Route path="/marketplace/vendors" element={<VendorMarketplace />} />
+                <Route path="/marketplace/vendors/:id" element={<VendorDetails />} />
+                <Route path="/vendors" element={<VendorMarketplace />} />
+
+                {/* RFQs */}
+                <Route path="/rfqs" element={<RFQList />} />
+                <Route
+                  path="/rfqs/new"
+                  element={
+                    <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                      <RFQFormEnhanced />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* <Route 
                 path="/rfqs/new-legacy" 
                 element={
                   <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
@@ -119,138 +120,154 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               /> */}
-              <Route path="/rfqs/:id" element={<RFQDetails />} />
-              <Route 
-                path="/rfqs/:id/submit-bid" 
-                element={
-                  <ProtectedRoute allowedRoles={['vendor']}>
-                    <BidSubmissionEnhanced />
+                <Route path="/rfqs/:id" element={<RFQDetails />} />
+                <Route
+                  path="/rfqs/:id/submit-bid"
+                  element={
+                    <ProtectedRoute allowedRoles={['vendor']}>
+                      <BidSubmissionEnhanced />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rfqs/:id/bids"
+                  element={
+                    <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
+                      <BidComparison />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Contracts */}
+                <Route path="/contracts" element={<ContractList />} />
+                <Route path="/contracts/:id" element={<ContractDetails />} />
+
+                {/* Invoices */}
+                <Route path="/contracts/:contractId/invoices" element={<InvoiceList />} />
+                <Route path="/contracts/:contractId/invoices/new" element={<InvoiceForm />} />
+                <Route path="/invoices/:id" element={<InvoiceDetails />} />
+
+                {/* Ratings */}
+                <Route path="/contracts/:contractId/rate" element={<RatingForm />} />
+
+                {/* Vendor Routes */}
+                <Route path="/vendors" element={<VendorMarketplace />} />
+                <Route path="/vendors/:id" element={<VendorDetails />} />
+                <Route path="/marketplace/vendors" element={<VendorMarketplace />} />
+                <Route path="/vendors/profile" element={<VendorProfile />} />
+                <Route path="/vendors/kyc" element={<VendorKYC />} />
+                <Route path="/vendors/products" element={<VendorProductList />} />
+                <Route path="/vendors/products/add" element={<VendorProductForm />} />
+                <Route path="/vendors/products/:id" element={<VendorProductForm />} />
+
+                {/* Product & E-commerce Routes */}
+                <Route path="/marketplace/products" element={<ProductMarketplace />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route path="/cart" element={<ShoppingCart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/orders" element={<OrderList />} />
+                <Route path="/orders/:id" element={<OrderDetails />} />
+
+                {/* Admin Product Category Management */}
+                <Route path="/admin/product-categories" element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <ProductCategoryManagement />
                   </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/rfqs/:id/bids" 
-                element={
-                  <ProtectedRoute allowedRoles={['org_owner', 'facility_manager']}>
-                    <BidComparison />
+                } />
+
+                {/* Disputes */}
+                <Route path="/disputes" element={<DisputeList />} />
+                <Route path="/disputes/new" element={<DisputeForm />} />
+                <Route path="/disputes/:id" element={<DisputeDetails />} />
+
+                {/* Admin */}
+                <Route path="/admin/vendors/pending" element={<VendorVerification />} />
+                <Route path="/admin/tender-templates" element={<TenderDocumentTemplates />} />
+
+                {/* Admin Products */}
+                <Route path="/admin/products" element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <ProductManagementList />
                   </ProtectedRoute>
-                } 
-              />
-              
-              {/* Contracts */}
-              <Route path="/contracts" element={<ContractList />} />
-              <Route path="/contracts/:id" element={<ContractDetails />} />
+                } />
+                <Route path="/admin/products/add" element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminProductForm />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/products/:id" element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminProductForm />
+                  </ProtectedRoute>
+                } />
+                {/* User Management */}
+                <Route
+                  path="/dashboard/users"
+                  element={
+                    <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
+                      <UserList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard/users/new"
+                  element={
+                    <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
+                      <UserForm />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard/users/:id/edit"
+                  element={
+                    <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
+                      <UserForm />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Invoices */}
-              <Route path="/contracts/:contractId/invoices" element={<InvoiceList />} />
-              <Route path="/contracts/:contractId/invoices/new" element={<InvoiceForm />} />
-              <Route path="/invoices/:id" element={<InvoiceDetails />} />
+                {/* Notifications */}
+                <Route path="/dashboard/notifications" element={<NotificationCenter />} />
 
-              {/* Ratings */}
-              <Route path="/contracts/:contractId/rate" element={<RatingForm />} />
+                {/* Profile */}
+                <Route path="/dashboard/profile" element={<ProfileSettings />} />
 
-              {/* Vendor Routes */}
-              <Route path="/vendors" element={<VendorMarketplace />} />
-              <Route path="/vendors/:id" element={<VendorDetails />} />
-              <Route path="/marketplace/vendors" element={<VendorMarketplace />} />
-              <Route path="/vendors/profile" element={<VendorProfile />} />
-              <Route path="/vendors/kyc" element={<VendorKYC />} />
-              <Route path="/vendors/products" element={<VendorProductList />} />
-              <Route path="/vendors/products/add" element={<VendorProductForm />} />
-              <Route path="/vendors/products/:id" element={<VendorProductForm />} />
-              
-              {/* Product & E-commerce Routes */}
-              <Route path="/marketplace/products" element={<ProductMarketplace />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
-              <Route path="/cart" element={<ShoppingCart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/orders" element={<OrderList />} />
-              <Route path="/orders/:id" element={<OrderDetails />} />
-              
-              {/* Admin Product Category Management */}
-              <Route path="/admin/product-categories" element={
-                <ProtectedRoute allowedRoles={['super_admin']}>
-                  <ProductCategoryManagement />
+                {/* Reports */}
+                <Route
+                  path="/dashboard/reports"
+                  element={
+                    <ProtectedRoute allowedRoles={['super_admin', 'org_owner', 'facility_manager']}>
+                      <ReportList />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Payments */}
+                <Route path="/dashboard/payments" element={<PaymentList />} />
+
+                {/* Documents */}
+                <Route path="/dashboard/documents" element={<DocumentList />} />
+
+                {/* Messages */}
+                <Route path="/dashboard/messages" element={<MessageCenter />} />
+
+                {/* Settings - Placeholder */}
+                <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground mt-2">Settings coming soon...</p></div>} />
+              </Route>
+
+              {/* Vendor Profile Routes - with role check */}
+              <Route element={
+                <ProtectedRoute allowedRoles={['vendor']}>
+                  <DashboardLayout />
                 </ProtectedRoute>
-              } />
+              }>
+                <Route path="/vendor/profile" element={<VendorProfile />} />
+                <Route path="/vendor/kyc" element={<VendorKYC />} />
+              </Route>
 
-              {/* Disputes */}
-              <Route path="/disputes" element={<DisputeList />} />
-              <Route path="/disputes/new" element={<DisputeForm />} />
-              <Route path="/disputes/:id" element={<DisputeDetails />} />
-              
-              {/* Admin */}
-              <Route path="/admin/vendors/pending" element={<VendorVerification />} />
-              <Route path="/admin/tender-templates" element={<TenderDocumentTemplates />} />
-              
-              {/* User Management */}
-              <Route 
-                path="/dashboard/users" 
-                element={
-                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
-                    <UserList />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/dashboard/users/new" 
-                element={
-                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
-                    <UserForm />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/dashboard/users/:id/edit" 
-                element={
-                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner']}>
-                    <UserForm />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              {/* Notifications */}
-              <Route path="/dashboard/notifications" element={<NotificationCenter />} />
-              
-              {/* Profile */}
-              <Route path="/dashboard/profile" element={<ProfileSettings />} />
-              
-              {/* Reports */}
-              <Route 
-                path="/dashboard/reports" 
-                element={
-                  <ProtectedRoute allowedRoles={['super_admin', 'org_owner', 'facility_manager']}>
-                    <ReportList />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              {/* Payments */}
-              <Route path="/dashboard/payments" element={<PaymentList />} />
-              
-              {/* Documents */}
-              <Route path="/dashboard/documents" element={<DocumentList />} />
-              
-              {/* Messages */}
-              <Route path="/dashboard/messages" element={<MessageCenter />} />
-              
-              {/* Settings - Placeholder */}
-              <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground mt-2">Settings coming soon...</p></div>} />
-            </Route>
-            
-            {/* Vendor Profile Routes - with role check */}
-            <Route element={
-              <ProtectedRoute allowedRoles={['vendor']}>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }>
-              <Route path="/vendor/profile" element={<VendorProfile />} />
-              <Route path="/vendor/kyc" element={<VendorKYC />} />
-            </Route>
-            
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
@@ -261,23 +278,3 @@ const App = () => (
 export default App;
 
 
-// // src/App.js
-// import React from 'react';
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import TestMarketplace from './testing/TestMarketplace';
-// import './index.css';
-
-// function App() {
-//   return (
-//     <Router>
-//       <div className="App">
-//         <Routes>
-//           <Route path="/" element={<TestMarketplace />} />
-//           <Route path="/test" element={<TestMarketplace />} />
-//         </Routes>
-//       </div>
-//     </Router>
-//   );
-// }
-
-// export default App;

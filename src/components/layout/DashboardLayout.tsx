@@ -114,6 +114,10 @@ const DashboardLayout = () => {
         ...(user?.role === 'super_admin' ? [{ href: '/admin/product-categories', label: 'Product Categories', icon: Tag }] : []),
         ...((user?.role === 'super_admin' || user?.role === 'org_owner') ? [{ href: '/dashboard/users', label: 'Users', icon: Users }] : []),
         ...((user?.role === 'super_admin' || user?.role === 'org_owner' || user?.role === 'facility_manager') ? [{ href: '/dashboard/reports', label: 'Reports', icon: FileBarChart }] : []),
+        ...(user?.role === 'super_admin' ? [{ href: '/admin/products', label: 'Products', icon: Tag }] : []),
+        // ...(user?.role === 'super_admin' ? [{ href: '/admin/products', label: 'Products', icon: Tag }] : []),
+
+
       ],
     }] : []),
   ];

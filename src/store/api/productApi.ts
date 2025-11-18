@@ -131,6 +131,12 @@ export const productApi = apiSlice.injectEndpoints({
       }),
       providesTags: (_result, _error, { id }) => [{ type: 'Product', id }],
     }),
+
+    
+
+
+  
+
   }),
 });
 
